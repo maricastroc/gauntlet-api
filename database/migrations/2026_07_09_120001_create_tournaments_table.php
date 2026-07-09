@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('tournaments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete(); // dono/organizador
             $table->string('name');
             $table->string('format')->default('groups_knockout');
             $table->json('tiebreak')->nullable(); // critérios de desempate; null => TiebreakRules::fifa()

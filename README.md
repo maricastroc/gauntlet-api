@@ -46,9 +46,21 @@ importar `Illuminate\*` ou `App\Models\*`.
       com índices e a coluna `version` (lock otimista).
 - [x] Action `ConfirmMatchResult` — costura Eloquent ↔ Domain dentro da transação, com lock
       otimista que rejeita edição concorrente (`StaleResultException` → HTTP 409).
-- [x] Testes: 12 cenários de Domain + 1 property test (300 grupos aleatórios) + 3 feature tests.
+- [x] API REST com Sanctum: auth por token, classificação pública, lançamento de resultado
+      protegido por dono (Policy), validação (422) e conflito de versão (409).
+- [x] Testes: 12 cenários de Domain + 1 property test (300 grupos aleatórios) + 12 feature tests
+      (Action com banco real + a API ponta a ponta). **25 testes, ~3400 asserções.**
 - [ ] `BracketResolver` ligado ao banco (materialização das vagas do mata-mata na transação).
-- [ ] Sanctum (auth httpOnly) + endpoints REST + Resources.
+- [ ] Endpoints de escrita do mata-mata + leitura do chaveamento.
+
+## API
+
+| Método | Rota | Auth | O quê |
+|--------|------|------|-------|
+| `POST` | `/api/register` · `/api/login` | — | emite token Sanctum |
+| `GET`  | `/api/groups/{group}/standings` | — | classificação (projeção das partidas) |
+| `PUT`  | `/api/matches/{fixture}/result` | dono | lança/edita resultado → classificação recalculada; 409 em conflito de versão |
+| `GET`  | `/api/user` · `POST /api/logout` | token | sessão |
 
 ## Rodando
 

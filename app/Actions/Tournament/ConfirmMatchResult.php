@@ -4,23 +4,17 @@ declare(strict_types=1);
 
 namespace App\Actions\Tournament;
 
-use App\Domain\Tournament\Input\MatchResult;
-use App\Domain\Tournament\Input\TeamRef;
-use App\Domain\Tournament\Standings\GroupTable;
 use App\Domain\Tournament\Standings\Standing;
-use App\Domain\Tournament\Standings\TiebreakRules;
 use App\Exceptions\StaleResultException;
 use App\Models\Fixture;
-use App\Models\Team;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Grava (ou edita) o resultado de um jogo de grupo e devolve a classificação recalculada.
  *
- * É a fronteira entre Laravel e o Domain puro:
+ * É a fronteira de ESCRITA entre Laravel e o Domain puro:
  *   1. grava o placar sob lock OTIMISTA (só se a versão bater) — protege edição concorrente;
- *   2. traduz Eloquent -> DTOs;
- *   3. delega o cálculo à engine pura GroupTable;
+ *   2. recomputa a classificação delegando à engine pura (via ComputeGroupStandings);
  * tudo numa única transação, para a classificação nunca refletir um estado parcial.
  *
  * A classificação em si não é gravada: é PROJEÇÃO das partidas. Editar um resultado é
@@ -28,6 +22,8 @@ use Illuminate\Support\Facades\DB;
  */
 final class ConfirmMatchResult
 {
+    public function __construct(private readonly ComputeGroupStandings $standings = new ComputeGroupStandings) {}
+
     /**
      * @return Standing[] a classificação recalculada do grupo do jogo
      *
@@ -49,26 +45,9 @@ final class ConfirmMatchResult
                 throw new StaleResultException($fixture->getKey(), $expectedVersion);
             }
 
-            $group = $fixture->group()->with('teams')->firstOrFail();
+            $group = $fixture->group()->firstOrFail();
 
-            // borda: Eloquent -> DTO puro
-            $teams = $group->teams
-                ->map(fn (Team $team) => new TeamRef($team->id, $team->name))
-                ->all();
-
-            $results = Fixture::where('group_id', $group->id)
-                ->finished()
-                ->get()
-                ->map(fn (Fixture $f) => new MatchResult(
-                    $f->home_team_id,
-                    $f->away_team_id,
-                    $f->home_score,
-                    $f->away_score,
-                ))
-                ->all();
-
-            // núcleo puro, determinístico
-            return GroupTable::compute($teams, $results, TiebreakRules::fifa(), $group->qualify_count);
+            return $this->standings->for($group);
         });
     }
 }

@@ -27,6 +27,11 @@ class Fixture extends Model
         'kickoff_at' => 'datetime',
     ];
 
+    public function tournament(): BelongsTo
+    {
+        return $this->belongsTo(Tournament::class);
+    }
+
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
