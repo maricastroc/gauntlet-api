@@ -18,10 +18,10 @@ use Illuminate\Support\Facades\Hash;
 final class TournamentDemoSeeder extends Seeder
 {
     private const GROUPS = [
-        'A' => [['Brasil', '🇧🇷', 'BRA'], ['Japão', '🇯🇵', 'JPN'], ['Croácia', '🇭🇷', 'CRO'], ['Marrocos', '🇲🇦', 'MAR']],
-        'B' => [['Argentina', '🇦🇷', 'ARG'], ['França', '🇫🇷', 'FRA'], ['Senegal', '🇸🇳', 'SEN'], ['Polônia', '🇵🇱', 'POL']],
-        'C' => [['Espanha', '🇪🇸', 'ESP'], ['Alemanha', '🇩🇪', 'GER'], ['Uruguai', '🇺🇾', 'URU'], ['Coreia do Sul', '🇰🇷', 'KOR']],
-        'D' => [['Portugal', '🇵🇹', 'POR'], ['Países Baixos', '🇳🇱', 'NED'], ['México', '🇲🇽', 'MEX'], ['Itália', '🇮🇹', 'ITA']],
+        'A' => [['Brazil', '🇧🇷', 'BRA'], ['Japan', '🇯🇵', 'JPN'], ['Croatia', '🇭🇷', 'CRO'], ['Morocco', '🇲🇦', 'MAR']],
+        'B' => [['Argentina', '🇦🇷', 'ARG'], ['France', '🇫🇷', 'FRA'], ['Senegal', '🇸🇳', 'SEN'], ['Poland', '🇵🇱', 'POL']],
+        'C' => [['Spain', '🇪🇸', 'ESP'], ['Germany', '🇩🇪', 'GER'], ['Uruguay', '🇺🇾', 'URU'], ['South Korea', '🇰🇷', 'KOR']],
+        'D' => [['Portugal', '🇵🇹', 'POR'], ['Netherlands', '🇳🇱', 'NED'], ['Mexico', '🇲🇽', 'MEX'], ['Italy', '🇮🇹', 'ITA']],
     ];
 
     /**
@@ -118,17 +118,17 @@ final class TournamentDemoSeeder extends Seeder
         ]);
 
         // Quarterfinals (crossing the groups), semis and final
-        $qf1 = $tie(1, 1, 'seed:A1', 'seed:B2'); // Brasil × França
-        $qf2 = $tie(1, 2, 'seed:C1', 'seed:D2'); // Espanha × Países Baixos
-        $qf3 = $tie(1, 3, 'seed:B1', 'seed:A2'); // Argentina × Japão
-        $qf4 = $tie(1, 4, 'seed:D1', 'seed:C2'); // Portugal × Alemanha
+        $qf1 = $tie(1, 1, 'seed:A1', 'seed:B2'); // Brazil × France
+        $qf2 = $tie(1, 2, 'seed:C1', 'seed:D2'); // Spain × Netherlands
+        $qf3 = $tie(1, 3, 'seed:B1', 'seed:A2'); // Argentina × Japan
+        $qf4 = $tie(1, 4, 'seed:D1', 'seed:C2'); // Portugal × Germany
         $sf1 = $tie(2, 1, "winner:{$qf1->id}", "winner:{$qf2->id}");
         $sf2 = $tie(2, 2, "winner:{$qf3->id}", "winner:{$qf4->id}");
         $final = $tie(3, 1, "winner:{$sf1->id}", "winner:{$sf2->id}");
 
         // Two quarterfinals already decided (one on penalties); the rest scheduled.
-        $this->knockoutFixture($tournament, $stage, $qf1, 2, 1);          // Brasil wins
-        $this->knockoutFixture($tournament, $stage, $qf2, 1, 1, 4, 2);    // Espanha on penalties
+        $this->knockoutFixture($tournament, $stage, $qf1, 2, 1);          // Brazil wins
+        $this->knockoutFixture($tournament, $stage, $qf2, 1, 1, 4, 2);    // Spain on penalties
         foreach ([$qf3, $qf4, $sf1, $sf2, $final] as $pending) {
             $this->knockoutFixture($tournament, $stage, $pending);
         }
