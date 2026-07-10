@@ -30,4 +30,16 @@ class Tournament extends Model
     {
         return $this->hasMany(Stage::class);
     }
+
+    /** Carrega tudo que o TournamentDetailResource precisa. */
+    public function loadFullDetail(): self
+    {
+        return $this->load([
+            'teams',
+            'stages.groups.teams',
+            'stages.fixtures.homeTeam',
+            'stages.fixtures.awayTeam',
+            'stages.ties',
+        ]);
+    }
 }

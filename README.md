@@ -52,9 +52,12 @@ importar `Illuminate\*` ou `App\Models\*`.
       + topologia; o mesmo endpoint de resultado atende grupo (→ classificação) e mata-mata (→ chaveamento).
 - [x] Seeder de demo: "Copa Atlas 2026" completa (4 grupos decididos + mata-mata em andamento)
       num comando, com organizador de credenciais conhecidas — API rica e navegável na hora.
-- [x] Testes: 13 cenários de Domain + property test (300 grupos) + 16 feature tests (banco real +
-      API ponta a ponta, incl. avanço no mata-mata, pênaltis e o seeder). **29 testes, ~3400 asserções.**
-- [ ] Geração automática de chaveamento a partir dos grupos + CRUD de montagem do torneio.
+- [x] Montagem de torneio (CRUD): criar torneio, adicionar times, montar a fase de grupos e
+      **gerar** o returno-único e o chaveamento — por engines puras novas (`RoundRobinScheduler`,
+      `KnockoutSeeder`, com o cruzamento A1×B2 e os `winner:` encadeados) + Actions transacionais.
+      Um `TournamentDetailResource` rico (etapas → grupos → jogos com `version`) alimenta o front.
+- [x] Testes: cenários de Domain + property test + feature tests (banco real + API ponta a ponta,
+      incl. avanço no mata-mata, pênaltis, o seeder e a montagem completa). **51 testes, ~3550 asserções.**
 
 ## API
 
@@ -64,6 +67,12 @@ importar `Illuminate\*` ou `App\Models\*`.
 | `GET`  | `/api/groups/{group}/standings` | — | classificação do grupo (projeção das partidas) |
 | `GET`  | `/api/stages/{stage}/bracket` | — | chaveamento resolvido + campeão |
 | `PUT`  | `/api/matches/{fixture}/result` | dono | lança/edita resultado → grupo devolve classificação, mata-mata devolve chaveamento; 409 em conflito de versão |
+| `GET`  | `/api/tournaments/{tournament}` | — | visão completa (etapas → grupos → jogos com `version`) — o read model do front |
+| `GET` · `POST` | `/api/tournaments` | dono | lista os meus · cria um (rascunho) |
+| `DELETE` | `/api/tournaments/{tournament}` | dono | remove (cascata) |
+| `POST` | `/api/tournaments/{tournament}/teams` | dono | adiciona times em lote |
+| `POST` | `/api/tournaments/{tournament}/group-stage` | dono | monta grupos + gera returno-único |
+| `POST` | `/api/tournaments/{tournament}/knockout` | dono | gera o chaveamento a partir dos grupos (422 se não fechar) |
 | `GET`  | `/api/user` · `POST /api/logout` | token | sessão |
 
 ## Rodando

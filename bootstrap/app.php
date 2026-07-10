@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\InvalidTournamentStructure;
 use App\Exceptions\StaleResultException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -27,4 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'message' => $e->getMessage(),
             'expected_version' => $e->expectedVersion,
         ], 409));
+
+        // Montagem incoerente do torneio => 422 (dado inválido de negócio).
+        $exceptions->render(fn (InvalidTournamentStructure $e) => new JsonResponse([
+            'message' => $e->getMessage(),
+        ], 422));
     })->create();

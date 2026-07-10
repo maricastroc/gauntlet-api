@@ -26,4 +26,9 @@ class Stage extends Model
     {
         return $this->hasMany(Tie::class);
     }
+
+    public function fixtures(): HasMany
+    {
+        return $this->hasMany(Fixture::class);
+    }
 }
