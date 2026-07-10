@@ -15,16 +15,8 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-/**
- * Constrói a "Copa Atlas 2026" completa: um organizador de credenciais conhecidas,
- * 4 grupos totalmente disputados e um mata-mata em andamento — para a API ficar rica
- * e navegável num comando. Reexecutável: derruba a demo anterior antes de reconstruir.
- *
- * Credenciais do organizador: demo@bracket.test / password
- */
 final class TournamentDemoSeeder extends Seeder
 {
-    /** Grupos em ordem de força (índice 0 = 1º colocado pelo esquema de placares). */
     private const GROUPS = [
         'A' => [['Brasil', '🇧🇷', 'BRA'], ['Japão', '🇯🇵', 'JPN'], ['Croácia', '🇭🇷', 'CRO'], ['Marrocos', '🇲🇦', 'MAR']],
         'B' => [['Argentina', '🇦🇷', 'ARG'], ['França', '🇫🇷', 'FRA'], ['Senegal', '🇸🇳', 'SEN'], ['Polônia', '🇵🇱', 'POL']],
@@ -33,13 +25,13 @@ final class TournamentDemoSeeder extends Seeder
     ];
 
     /**
-     * Placares do returno-único de cada grupo, por par de índices (mais forte à esquerda).
-     * Garante 1º/2º decididos, com os dois primeiros empatados em pontos (desempate no saldo).
+     * Single round-robin scores for each group, by index pair (stronger on the left).
+     * Ensures 1st/2nd are decided, with the top two tied on points (tiebreak on goal difference).
      *
      * @var array<string, array{int, int}>
      */
     private const GROUP_SCORES = [
-        '0-1' => [1, 1], // os dois melhores empatam
+        '0-1' => [1, 1], // the two best teams draw
         '0-2' => [2, 0],
         '0-3' => [3, 0],
         '1-2' => [2, 1],
@@ -50,24 +42,24 @@ final class TournamentDemoSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            // idempotência: derruba a demo anterior (cascata cuida de times/fases/jogos/chaves)
-            Tournament::where('name', 'Copa Atlas 2026')->get()->each->delete();
+            // idempotency: drop the previous demo (cascade handles teams/stages/matches/brackets)
+            Tournament::where('name', 'Atlas Cup 2026')->get()->each->delete();
 
             $owner = User::updateOrCreate(
                 ['email' => 'demo@bracket.test'],
-                ['name' => 'Organizador Demo', 'password' => Hash::make('password')],
+                ['name' => 'Demo Organizer', 'password' => Hash::make('password')],
             );
 
             $tournament = Tournament::create([
                 'user_id' => $owner->id,
-                'name' => 'Copa Atlas 2026',
+                'name' => 'Atlas Cup 2026',
                 'status' => 'active',
             ]);
 
             $groupStage = Stage::create([
                 'tournament_id' => $tournament->id,
                 'type' => 'group',
-                'name' => 'Fase de grupos',
+                'name' => 'Group stage',
                 'position' => 1,
             ]);
 
@@ -89,7 +81,7 @@ final class TournamentDemoSeeder extends Seeder
         });
     }
 
-    /** @param  Team[]  $teams  em ordem de força */
+    /** @param  Team[]  $teams  in order of strength */
     private function playGroup(Tournament $tournament, Stage $stage, Group $group, array $teams): void
     {
         foreach (self::GROUP_SCORES as $pair => [$homeScore, $awayScore]) {
@@ -113,7 +105,7 @@ final class TournamentDemoSeeder extends Seeder
         $stage = Stage::create([
             'tournament_id' => $tournament->id,
             'type' => 'knockout',
-            'name' => 'Mata-mata',
+            'name' => 'Knockout',
             'position' => 2,
         ]);
 
@@ -125,7 +117,7 @@ final class TournamentDemoSeeder extends Seeder
             'away_source' => $away,
         ]);
 
-        // Quartas (cruzando os grupos), semis e final
+        // Quarterfinals (crossing the groups), semis and final
         $qf1 = $tie(1, 1, 'seed:A1', 'seed:B2'); // Brasil × França
         $qf2 = $tie(1, 2, 'seed:C1', 'seed:D2'); // Espanha × Países Baixos
         $qf3 = $tie(1, 3, 'seed:B1', 'seed:A2'); // Argentina × Japão
@@ -134,9 +126,9 @@ final class TournamentDemoSeeder extends Seeder
         $sf2 = $tie(2, 2, "winner:{$qf3->id}", "winner:{$qf4->id}");
         $final = $tie(3, 1, "winner:{$sf1->id}", "winner:{$sf2->id}");
 
-        // Duas quartas já decididas (uma nos pênaltis); o resto agendado.
-        $this->knockoutFixture($tournament, $stage, $qf1, 2, 1);          // Brasil vence
-        $this->knockoutFixture($tournament, $stage, $qf2, 1, 1, 4, 2);    // Espanha nos pênaltis
+        // Two quarterfinals already decided (one on penalties); the rest scheduled.
+        $this->knockoutFixture($tournament, $stage, $qf1, 2, 1);          // Brasil wins
+        $this->knockoutFixture($tournament, $stage, $qf2, 1, 1, 4, 2);    // Espanha on penalties
         foreach ([$qf3, $qf4, $sf1, $sf2, $final] as $pending) {
             $this->knockoutFixture($tournament, $stage, $pending);
         }

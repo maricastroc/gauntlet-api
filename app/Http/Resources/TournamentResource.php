@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Resumo de um torneio para a listagem ("meus torneios").
+ * Summary of a tournament for the listing ("my tournaments").
  *
  * @property-read Tournament $resource
  */

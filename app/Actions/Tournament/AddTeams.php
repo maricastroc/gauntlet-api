@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Adiciona times a um torneio, em lote. Cada time é só nome + (opcional) código e bandeira.
+ * Adds teams to a tournament, in bulk. Each team is just a name + (optional) code and flag.
  */
 final class AddTeams
 {

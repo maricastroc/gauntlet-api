@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Domain\Tournament\Input;
 
 /**
- * Resultado de uma partida encerrada — DTO puro de entrada da engine.
- * A camada de aplicação (Action) mapeia Eloquent -> este objeto.
- * Só partidas com placar definido chegam aqui.
+ * Result of a finished match — a pure input DTO for the engine.
+ * The application layer (Action) maps Eloquent -> this object.
+ * Only matches with a defined score reach here.
  */
 final class MatchResult
 {

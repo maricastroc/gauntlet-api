@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Gate;
 final class GroupStageController extends Controller
 {
     /**
-     * Monta a fase de grupos (grupos + distribuição + returno-único) e devolve o
-     * torneio completo já com os ids novos. Só o dono.
+     * Builds the group stage (groups + distribution + single round-robin) and returns
+     * the full tournament already with the new ids. Owner only.
      */
     public function store(
         BuildGroupStageRequest $request,

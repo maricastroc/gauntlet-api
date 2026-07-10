@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Gate;
 
 final class TournamentController extends Controller
 {
-    /** Lista os torneios do organizador autenticado. */
+    /** Lists the tournaments of the authenticated organizer. */
     public function index(Request $request): AnonymousResourceCollection
     {
         $tournaments = Tournament::query()
@@ -28,7 +28,7 @@ final class TournamentController extends Controller
         return TournamentResource::collection($tournaments);
     }
 
-    /** Cria um torneio (rascunho). */
+    /** Creates a tournament (draft). */
     public function store(CreateTournamentRequest $request, CreateTournament $action): JsonResponse
     {
         $tournament = $action->handle($request->user(), $request->tournamentName());
@@ -38,13 +38,13 @@ final class TournamentController extends Controller
             ->setStatusCode(201);
     }
 
-    /** A visão completa do torneio — estrutura + jogos (com versão). Pública (visão torcedor). */
+    /** The full view of the tournament — structure + matches (with version). Public (fan view). */
     public function show(Tournament $tournament): TournamentDetailResource
     {
         return new TournamentDetailResource($tournament->loadFullDetail());
     }
 
-    /** Remove o torneio (cascata cuida de times/etapas/jogos). Só o dono. */
+    /** Removes the tournament (cascade handles teams/stages/matches). Owner only. */
     public function destroy(Tournament $tournament): \Illuminate\Http\Response
     {
         Gate::authorize('manage', $tournament);

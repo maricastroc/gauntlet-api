@@ -13,9 +13,9 @@ use App\Models\Tournament;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Monta a fase de grupos: cria a etapa, os grupos, distribui os times e gera o
- * returno-único de cada grupo (jogos 'scheduled', sem placar) — pela engine pura.
- * Tudo numa transação: ou o torneio ganha a fase inteira, ou nada.
+ * Builds the group stage: creates the stage, the groups, distributes the teams and generates the
+ * single round-robin of each group (matches 'scheduled', without score) — via the pure engine.
+ * All in one transaction: either the tournament gets the entire stage, or nothing.
  */
 final class BuildGroupStage
 {
@@ -25,14 +25,14 @@ final class BuildGroupStage
     public function handle(Tournament $tournament, int $qualifyCount, array $groups): Stage
     {
         if ($tournament->stages()->where('type', 'group')->exists()) {
-            throw new InvalidTournamentStructure('Este torneio já tem uma fase de grupos.');
+            throw new InvalidTournamentStructure('This tournament already has a group stage.');
         }
 
         return DB::transaction(function () use ($tournament, $qualifyCount, $groups) {
             $stage = Stage::create([
                 'tournament_id' => $tournament->id,
                 'type' => 'group',
-                'name' => 'Fase de grupos',
+                'name' => 'Group stage',
                 'position' => 1,
             ]);
 

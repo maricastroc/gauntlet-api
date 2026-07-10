@@ -15,7 +15,6 @@ final class ConfirmMatchResultRequest extends FormRequest
             'home_score' => ['required', 'integer', 'min:0', 'max:99'],
             'away_score' => ['required', 'integer', 'min:0', 'max:99'],
             'expected_version' => ['required', 'integer', 'min:0'],
-            // pênaltis: só fazem sentido no mata-mata; opcionais e ignorados nos grupos
             'home_penalties' => ['nullable', 'integer', 'min:0', 'max:99'],
             'away_penalties' => ['nullable', 'integer', 'min:0', 'max:99'],
         ];

@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-// Runner de fumaça do mata-mata — PHP puro, sem framework.
-// Uso:  php scripts/smoke-bracket.php   (a partir da raiz do projeto)
-
 use App\Domain\Tournament\Input\TeamRef;
 use App\Domain\Tournament\Bracket\BracketResolver;
 use App\Domain\Tournament\Bracket\SlotSource;

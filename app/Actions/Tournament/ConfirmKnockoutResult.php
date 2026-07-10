@@ -10,11 +10,6 @@ use App\Exceptions\StaleResultException;
 use App\Models\Fixture;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Escrita de resultado do mata-mata: grava placar + pênaltis sob lock otimista e
- * devolve o chaveamento re-resolvido. O avanço propaga sozinho (é projeção), então
- * a transação só protege a gravação do resultado da própria partida.
- */
 final class ConfirmKnockoutResult
 {
     public function __construct(private readonly ResolveBracket $bracket = new ResolveBracket) {}

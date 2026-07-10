@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Formata o chaveamento resolvido (saída do BracketResolver) para JSON.
+ * Formats the resolved bracket (output of BracketResolver) as JSON.
  *
  * @property-read array{ties: ResolvedTie[], champion: ?TeamRef} $resource
  */

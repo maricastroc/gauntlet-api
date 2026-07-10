@@ -13,10 +13,10 @@ return new class extends Migration
             $table->foreignId('stage_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('round');
             $table->unsignedInteger('slot');
-            // topologia: de onde vem cada lado — 'seed:A1' ou 'winner:12'
+            // topology: where each side comes from — 'seed:A1' or 'winner:12'
             $table->string('home_source');
             $table->string('away_source');
-            // materialização opcional do avanço (a autoridade continua sendo o BracketResolver)
+            // optional materialization of the advancement (the BracketResolver remains the authority)
             $table->unsignedBigInteger('feeds_tie_id')->nullable()->index();
             $table->string('feeds_side')->nullable(); // home | away
             $table->unsignedBigInteger('match_id')->nullable()->index();

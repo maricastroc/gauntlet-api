@@ -8,8 +8,8 @@ use Tests\TestCase;
 | Test Case
 |--------------------------------------------------------------------------
 |
-| Os testes de Feature bootam a aplicação Laravel via Tests\TestCase.
-| Os testes de Unit (incl. app/Domain) são PHP puro e não precisam do framework.
+| Feature tests boot the Laravel application via Tests\TestCase.
+| Unit tests (incl. app/Domain) are plain PHP and don't need the framework.
 |
 */
 

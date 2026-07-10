@@ -7,12 +7,12 @@ namespace App\Domain\Tournament\Standings;
 use App\Domain\Tournament\Input\TeamRef;
 
 /**
- * Uma linha da classificação — value object imutável.
- * position/qualified só ganham valor no fim de GroupTable::compute().
+ * A single standings row — an immutable value object.
+ * position/qualified only get their values at the end of GroupTable::compute().
  */
 final class Standing
 {
-    /** @param list<string> $form  sequência de 'W'|'D'|'L' na ordem das partidas */
+    /** @param list<string> $form  sequence of 'W'|'D'|'L' in match order */
     public function __construct(
         public readonly TeamRef $team,
         public readonly int $played,

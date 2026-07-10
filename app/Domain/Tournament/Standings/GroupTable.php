@@ -8,18 +8,18 @@ use App\Domain\Tournament\Input\MatchResult;
 use App\Domain\Tournament\Input\TeamRef;
 
 /**
- * A engine pura de classificação de grupo.
+ * The pure group standings engine.
  *
- * Sem Eloquent, sem Illuminate, sem I/O: recebe DTOs, devolve value objects.
- * A classificação é uma PROJEÇÃO das partidas — nunca um estado mutável — então
- * "editei um resultado e a tabela reordenou" é só recomputar, não sincronizar.
+ * No Eloquent, no Illuminate, no I/O: it takes DTOs and returns value objects.
+ * The standings are a PROJECTION of the matches — never a mutable state — so
+ * "I edited a result and the table reordered" is just recomputing, not syncing.
  */
 final class GroupTable
 {
     /**
      * @param  TeamRef[]  $teams
-     * @param  MatchResult[]  $matches  apenas partidas encerradas
-     * @return Standing[] ordenado, com position (1..n) e qualified preenchidos
+     * @param  MatchResult[]  $matches  only finished matches
+     * @return Standing[] ordered, with position (1..n) and qualified filled in
      */
     public static function compute(array $teams, array $matches, TiebreakRules $rules, int $qualify = 2): array
     {
@@ -35,12 +35,12 @@ final class GroupTable
     }
 
     /**
-     * Dobra as partidas em uma linha por time. Reutilizada tanto para o grupo
-     * inteiro quanto para as mini-tabelas do confronto direto.
+     * Folds the matches into one row per team. Reused both for the whole group
+     * and for the head-to-head mini-tables.
      *
      * @param  TeamRef[]  $teams
      * @param  MatchResult[]  $matches
-     * @return array<int, Standing> indexado por id do time, na ordem de entrada
+     * @return array<int, Standing> indexed by team id, in input order
      */
     private static function accumulate(array $teams, array $matches): array
     {
@@ -54,8 +54,8 @@ final class GroupTable
         }
 
         foreach ($matches as $match) {
-            // Ignora partidas cujos times não estão neste conjunto — essencial para
-            // que a mini-tabela do confronto direto veja só os jogos entre os empatados.
+            // Skip matches whose teams are not in this set — essential so that
+            // the head-to-head mini-table sees only the games among the tied teams.
             if (! isset($acc[$match->homeTeamId], $acc[$match->awayTeamId])) {
                 continue;
             }
@@ -106,9 +106,9 @@ final class GroupTable
     }
 
     /**
-     * Ordena aplicando a cadeia de critérios. Onde um critério deixa um grupo de
-     * times empatado, recorre com os critérios restantes — inclusive o confronto
-     * direto, que reconstrói uma mini-tabela só com os jogos entre esses times.
+     * Orders by applying the chain of criteria. Where a criterion leaves a group of
+     * teams tied, it recurses with the remaining criteria — including head-to-head,
+     * which rebuilds a mini-table using only the games among those teams.
      *
      * @param  Standing[]  $standings
      * @param  MatchResult[]  $matches
@@ -120,7 +120,7 @@ final class GroupTable
         $list = array_values($standings);
 
         if (count($list) <= 1 || $criteria === []) {
-            return $list; // usort é estável no PHP 8+: empates totais mantêm a ordem de entrada
+            return $list; // usort is stable in PHP 8+: full ties keep the input order
         }
 
         $criterion = $criteria[0];
@@ -142,13 +142,13 @@ final class GroupTable
     }
 
     /**
-     * Confronto direto: entre os times ainda empatados, monta uma mini-liga só com
-     * os jogos entre eles e reordena por pontos/saldo/gols pró desse recorte.
-     * Quem continuar empatado até nessa mini-liga cai para os critérios seguintes.
+     * Head-to-head: among the still-tied teams, build a mini-league using only
+     * the games between them and reorder by points/goal difference/goals for of that slice.
+     * Any team still tied even in that mini-league falls through to the following criteria.
      *
      * @param  Standing[]  $tied
      * @param  MatchResult[]  $matches
-     * @param  Criterion[]  $rest  critérios após o HeadToHead
+     * @param  Criterion[]  $rest  criteria after HeadToHead
      * @return Standing[]
      */
     private static function resolveHeadToHead(array $tied, array $matches, array $rest): array
@@ -159,7 +159,7 @@ final class GroupTable
 
         $original = [];
         foreach ($tied as $standing) {
-            $original[$standing->team->id] = $standing; // preserva os números do grupo cheio
+            $original[$standing->team->id] = $standing; // preserves the full-group numbers
         }
 
         $result = [];
@@ -175,8 +175,8 @@ final class GroupTable
     }
 
     /**
-     * Agrupa em "baldes" ordenados (desc) por um ou mais critérios escalares.
-     * Cada balde reúne os times iguais em TODOS os escalares dados.
+     * Groups into ordered "buckets" (desc) by one or more scalar criteria.
+     * Each bucket gathers the teams equal on ALL the given scalars.
      *
      * @param  Standing[]  $standings
      * @param  Criterion[]  $scalars
@@ -188,7 +188,7 @@ final class GroupTable
 
         usort($list, static function (Standing $x, Standing $y) use ($scalars): int {
             foreach ($scalars as $scalar) {
-                $delta = self::scalar($y, $scalar) <=> self::scalar($x, $scalar); // desc
+                $delta = self::scalar($y, $scalar) <=> self::scalar($x, $scalar); // descending
                 if ($delta !== 0) {
                     return $delta;
                 }
@@ -221,7 +221,7 @@ final class GroupTable
     /**
      * @param  Standing[]  $standings
      * @param  MatchResult[]  $matches
-     * @return MatchResult[] só as partidas em que ambos os times estão no recorte
+     * @return MatchResult[] only the matches where both teams are in the slice
      */
     private static function matchesAmong(array $standings, array $matches): array
     {
@@ -243,7 +243,7 @@ final class GroupTable
             Criterion::GoalDifference => $s->goalDifference(),
             Criterion::GoalsFor => $s->goalsFor,
             Criterion::Wins => $s->won,
-            Criterion::HeadToHead => 0, // não é escalar; tratado em resolveHeadToHead()
+            Criterion::HeadToHead => 0, // not a scalar; handled in resolveHeadToHead()
         };
     }
 }

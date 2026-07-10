@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Domain\Tournament\Fixture;
 
 /**
- * Gera o returno-único de um grupo — engine pura, sem framework.
+ * Generates the single round-robin of a group — pure engine, no framework.
  *
- * Método do círculo (round-robin): cada par de times se enfrenta uma vez.
- * Com número ímpar de times, entra um "bye" que folga a rodada. O mando
- * (home/away) alterna por rodada só para equilibrar — num grupo é neutro.
+ * Circle method (round-robin): each pair of teams faces each other once.
+ * With an odd number of teams, a "bye" is added to sit out the round. Home/away
+ * alternates per round just to balance it out — within a group it is neutral.
  */
 final class RoundRobinScheduler
 {
     private const BYE = -1;
 
     /**
-     * @param  int[]  $teamIds  ids dos times do grupo, na ordem de entrada
-     * @return list<array{home: int, away: int}>  os confrontos, cada par uma vez
+     * @param  int[]  $teamIds  ids of the group's teams, in entry order
+     * @return list<array{home: int, away: int}>  the ties, each pair once
      */
     public static function schedule(array $teamIds): array
     {
@@ -48,7 +48,7 @@ final class RoundRobinScheduler
                 $fixtures[] = ['home' => $home, 'away' => $away];
             }
 
-            // rotaciona: fixa o índice 0 e gira o resto (leva o último para a posição 1)
+            // rotate: keep index 0 fixed and rotate the rest (move the last to position 1)
             $last = array_pop($teams);
             array_splice($teams, 1, 0, [$last]);
         }

@@ -12,22 +12,22 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TournamentController;
 use Illuminate\Support\Facades\Route;
 
-// Autenticação
+// Authentication
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Leitura pública (visão torcedor)
+// Public read (fan view)
 Route::get('/groups/{group}/standings', [StandingsController::class, 'show']);
 Route::get('/stages/{stage}/bracket', [BracketController::class, 'show']);
 Route::get('/tournaments/{tournament}', [TournamentController::class, 'show']);
 
-// Ações do organizador
+// Organizer actions
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::put('/matches/{fixture}/result', [MatchResultController::class, 'update']);
 
-    // Montagem de torneio (CRUD)
+    // Tournament assembly (CRUD)
     Route::get('/tournaments', [TournamentController::class, 'index']);
     Route::post('/tournaments', [TournamentController::class, 'store']);
     Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy']);

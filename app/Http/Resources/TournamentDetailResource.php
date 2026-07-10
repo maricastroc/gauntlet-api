@@ -14,10 +14,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * A visão completa de um torneio — o read model que a UI consome para saber a
- * estrutura (etapas, grupos, ids) e listar jogos com sua versão (para o console).
+ * The full view of a tournament — the read model the UI consumes to know the
+ * structure (stages, groups, ids) and list matches with their version (for the console).
  *
- * Espera as relações já carregadas: stages.groups.teams, stages.fixtures.homeTeam,
+ * Expects the relations already loaded: stages.groups.teams, stages.fixtures.homeTeam,
  * stages.fixtures.awayTeam, stages.ties.
  *
  * @property-read Tournament $resource

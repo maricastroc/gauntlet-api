@@ -12,22 +12,22 @@ function tieAt(array $ties, int $round, int $slot): array
             return $tie;
         }
     }
-    throw new RuntimeException("Tie r{$round}s{$slot} não encontrada");
+    throw new RuntimeException("Tie r{$round}s{$slot} not found");
 }
 
-test('4 grupos com 2 classificados reproduzem o cruzamento do seeder', function () {
+test('4 groups with 2 qualified reproduce the seeder crossover', function () {
     $ties = KnockoutSeeder::seed(['A', 'B', 'C', 'D'], 2);
 
-    // 8 classificados => 4 quartas + 2 semis + 1 final = 7 confrontos
+    // 8 qualified => 4 quarterfinals + 2 semifinals + 1 final = 7 ties
     expect($ties)->toHaveCount(7);
 
-    // quartas: cruzamento em espelho por par de grupos
+    // quarterfinals: mirrored crossover per group pair
     expect(tieAt($ties, 1, 1))->toMatchArray(['home_source' => 'seed:A1', 'away_source' => 'seed:B2']);
     expect(tieAt($ties, 1, 2))->toMatchArray(['home_source' => 'seed:C1', 'away_source' => 'seed:D2']);
     expect(tieAt($ties, 1, 3))->toMatchArray(['home_source' => 'seed:B1', 'away_source' => 'seed:A2']);
     expect(tieAt($ties, 1, 4))->toMatchArray(['home_source' => 'seed:D1', 'away_source' => 'seed:C2']);
 
-    // semis encadeiam vencedores de slots adjacentes (placeholders)
+    // semifinals chain winners of adjacent slots (placeholders)
     expect(tieAt($ties, 2, 1))->toMatchArray(['home_source' => 'winner:r1s1', 'away_source' => 'winner:r1s2']);
     expect(tieAt($ties, 2, 2))->toMatchArray(['home_source' => 'winner:r1s3', 'away_source' => 'winner:r1s4']);
 
@@ -35,24 +35,24 @@ test('4 grupos com 2 classificados reproduzem o cruzamento do seeder', function 
     expect(tieAt($ties, 3, 1))->toMatchArray(['home_source' => 'winner:r2s1', 'away_source' => 'winner:r2s2']);
 });
 
-test('2 grupos com 2 classificados geram semis + final', function () {
+test('2 groups with 2 qualified generate semifinals + final', function () {
     $ties = KnockoutSeeder::seed(['A', 'B'], 2);
 
-    expect($ties)->toHaveCount(3); // 2 semis + 1 final
+    expect($ties)->toHaveCount(3); // 2 semifinals + 1 final
     expect(tieAt($ties, 1, 1))->toMatchArray(['home_source' => 'seed:A1', 'away_source' => 'seed:B2']);
     expect(tieAt($ties, 1, 2))->toMatchArray(['home_source' => 'seed:B1', 'away_source' => 'seed:A2']);
     expect(tieAt($ties, 2, 1))->toMatchArray(['home_source' => 'winner:r1s1', 'away_source' => 'winner:r1s2']);
 });
 
-test('um classificado por grupo emparelha vencedores', function () {
+test('one qualified per group pairs winners', function () {
     $ties = KnockoutSeeder::seed(['A', 'B', 'C', 'D'], 1);
 
-    expect($ties)->toHaveCount(3); // 4 grupos => 2 semis + 1 final
+    expect($ties)->toHaveCount(3); // 4 groups => 2 semifinals + 1 final
     expect(tieAt($ties, 1, 1))->toMatchArray(['home_source' => 'seed:A1', 'away_source' => 'seed:B1']);
     expect(tieAt($ties, 1, 2))->toMatchArray(['home_source' => 'seed:C1', 'away_source' => 'seed:D1']);
 });
 
-test('16 classificados geram um bracket completo de 15 confrontos', function () {
+test('16 qualified generate a complete bracket of 15 ties', function () {
     $ties = KnockoutSeeder::seed(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], 2);
 
     // 16 => 8 + 4 + 2 + 1 = 15
@@ -61,7 +61,7 @@ test('16 classificados geram um bracket completo de 15 confrontos', function () 
     expect(array_filter($ties, fn ($t) => $t['round'] === 4))->toHaveCount(1);
 });
 
-test('recusa configurações que não fecham numa potência de 2', function () {
+test('rejects configurations that do not close to a power of 2', function () {
     expect(fn () => KnockoutSeeder::seed(['A', 'B', 'C'], 2))->toThrow(InvalidArgumentException::class);
     expect(fn () => KnockoutSeeder::seed(['A', 'B', 'C'], 1))->toThrow(InvalidArgumentException::class);
     expect(fn () => KnockoutSeeder::seed(['A', 'B', 'C', 'D'], 3))->toThrow(InvalidArgumentException::class);

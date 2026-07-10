@@ -14,14 +14,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 /**
- * Semeia o Grupo A do mock: 4 times e as 4 partidas, todas ainda 'scheduled'.
+ * Seeds Group A of the mock: 4 teams and the 4 matches, all still 'scheduled'.
  *
  * @return array{group: Group, teams: array<string,Team>, fixtures: array<int,Fixture>}
  */
 function seedGroupA(): array
 {
-    $tournament = Tournament::create(['name' => 'Copa Atlas 2026']);
-    $stage = Stage::create(['tournament_id' => $tournament->id, 'type' => 'group', 'name' => 'Fase de grupos']);
+    $tournament = Tournament::create(['name' => 'Atlas Cup 2026']);
+    $stage = Stage::create(['tournament_id' => $tournament->id, 'type' => 'group', 'name' => 'Group stage']);
     $group = Group::create(['stage_id' => $stage->id, 'name' => 'A', 'qualify_count' => 2]);
 
     $teams = [];
@@ -49,7 +49,7 @@ function seedGroupA(): array
     return ['group' => $group, 'teams' => $teams, 'fixtures' => $fixtures];
 }
 
-test('confirma resultados e recalcula a classificação do grupo', function () {
+test('confirms results and recalculates the group standings', function () {
     ['fixtures' => $f] = seedGroupA();
     $action = new ConfirmMatchResult;
 
@@ -59,14 +59,14 @@ test('confirma resultados e recalcula a classificação do grupo', function () {
     $table = $action->handle($f[4], 2, 1, 0); // Japão 2-1 Marrocos
 
     $names = array_map(fn ($s) => $s->team->name, $table);
-    expect($names)->toBe(['Brasil', 'Japão', 'Croácia', 'Marrocos']); // Brasil 1º por saldo sobre o Japão
+    expect($names)->toBe(['Brasil', 'Japão', 'Croácia', 'Marrocos']); // Brasil 1st on goal difference over Japão
 
     expect($table[0])->qualified->toBeTrue()
         ->and($table[1])->qualified->toBeTrue()
         ->and($table[2])->qualified->toBeFalse();
 });
 
-test('grava o resultado e incrementa a versão (lock otimista)', function () {
+test('stores the result and increments the version (optimistic lock)', function () {
     ['fixtures' => $f] = seedGroupA();
     (new ConfirmMatchResult)->handle($f[1], 2, 0, 0);
 
@@ -76,17 +76,17 @@ test('grava o resultado e incrementa a versão (lock otimista)', function () {
         ->and($fresh->version)->toBe(1);
 });
 
-test('rejeita edição concorrente com versão desatualizada', function () {
+test('rejects a concurrent edit with a stale version', function () {
     ['fixtures' => $f] = seedGroupA();
     $action = new ConfirmMatchResult;
 
-    // Primeira gravação leva a versão de 0 -> 1.
+    // First write moves the version from 0 -> 1.
     $action->handle($f[1], 2, 0, 0);
 
-    // Segunda pessoa ainda achava que a versão era 0 -> conflito.
+    // A second person still thought the version was 0 -> conflict.
     expect(fn () => $action->handle($f[1], 3, 0, 0))
         ->toThrow(StaleResultException::class);
 
-    // O placar da primeira gravação permanece intacto.
+    // The score from the first write remains intact.
     expect(Fixture::find($f[1]->id)->home_score)->toBe(2);
 });

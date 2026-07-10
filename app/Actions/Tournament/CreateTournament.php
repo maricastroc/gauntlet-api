@@ -7,10 +7,6 @@ namespace App\Actions\Tournament;
 use App\Models\Tournament;
 use App\Models\User;
 
-/**
- * Cria um torneio vazio (rascunho) pertencente a quem organiza.
- * As etapas (grupos, mata-mata) vêm depois, pelas Actions de montagem.
- */
 final class CreateTournament
 {
     public function handle(User $owner, string $name): Tournament

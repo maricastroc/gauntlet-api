@@ -13,14 +13,6 @@ use App\Models\Tournament;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
-/**
- * Gera o mata-mata a partir da fase de grupos: pega os nomes dos grupos e quantos
- * avançam, deriva a topologia pela engine pura (KnockoutSeeder) e materializa as
- * tuplas (Tie) + os jogos 'scheduled'.
- *
- * Os sources de vencedor saem da engine como placeholder 'winner:r{R}s{S}';
- * inserindo em ordem de rodada, resolvemos cada um para 'winner:{id real}'.
- */
 final class BuildKnockout
 {
     public function handle(Tournament $tournament): Stage
@@ -28,11 +20,11 @@ final class BuildKnockout
         $groupStage = $tournament->stages()->where('type', 'group')->first();
 
         if ($groupStage === null) {
-            throw new InvalidTournamentStructure('Crie a fase de grupos antes de gerar o mata-mata.');
+            throw new InvalidTournamentStructure('Create the group stage before generating the knockout bracket.');
         }
 
         if ($tournament->stages()->where('type', 'knockout')->exists()) {
-            throw new InvalidTournamentStructure('O mata-mata deste torneio já foi gerado.');
+            throw new InvalidTournamentStructure('The knockout bracket for this tournament has already been generated.');
         }
 
         $groups = $groupStage->groups()->orderBy('name')->get();
@@ -51,11 +43,11 @@ final class BuildKnockout
             $stage = Stage::create([
                 'tournament_id' => $tournament->id,
                 'type' => 'knockout',
-                'name' => 'Mata-mata',
+                'name' => 'Knockout',
                 'position' => 2,
             ]);
 
-            /** @var array<string, int> $idByRef "r{R}s{S}" => tie id já inserida */
+            /** @var array<string, int> $idByRef "r{R}s{S}" => already inserted tie id */
             $idByRef = [];
 
             foreach ($topology as $entry) {
@@ -85,14 +77,14 @@ final class BuildKnockout
     private static function resolve(string $source, array $idByRef): string
     {
         if (! str_starts_with($source, 'winner:r')) {
-            return $source; // 'seed:A1' — já é final
+            return $source; // 'seed:A1' — already final
         }
 
         $ref = substr($source, strlen('winner:')); // 'r1s2'
         $id = $idByRef[$ref] ?? null;
 
         if ($id === null) {
-            throw new InvalidTournamentStructure("Referência de vencedor não resolvida: {$source}.");
+            throw new InvalidTournamentStructure("Unresolved winner reference: {$source}.");
         }
 
         return "winner:{$id}";

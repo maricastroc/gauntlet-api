@@ -7,22 +7,12 @@ namespace App\Domain\Tournament\Bracket;
 use App\Domain\Tournament\Input\TeamRef;
 use RuntimeException;
 
-/**
- * A engine pura do mata-mata.
- *
- * Assim como a classificação, o bracket é uma PROJEÇÃO: quem está em cada vaga, quem
- * venceu e quem é o campeão são derivados da topologia + resultados. Editar um resultado
- * é recomputar — o efeito propaga sozinho para as rodadas seguintes.
- *
- * As vagas semeadas (ex.: "A1") chegam prontas em $seeds; quem as calcula é a camada de
- * composição (a partir de GroupTable), o que mantém este resolver independente da fase de grupos.
- */
 final class BracketResolver
 {
     /**
-     * @param  Tie[]  $ties
+     * @param  Tie[]
      * @param  TieResult[]  $results
-     * @param  array<string,TeamRef>  $seeds  ex.: ['A1' => TeamRef, 'B2' => TeamRef, ...]
+     * @param  array<string,TeamRef>
      * @return array{ties: ResolvedTie[], champion: ?TeamRef}
      */
     public static function resolve(array $ties, array $results, array $seeds): array
@@ -42,17 +32,17 @@ final class BracketResolver
         /** @var array<int, true> $resolving */
         $resolving = [];
 
-        $sideTeam = null; // declarado antes para a recursão mútua com $winnerOf
+        $sideTeam = null; // declared beforehand for the mutual recursion with $winnerOf
 
         $winnerOf = function (int $tieId) use (&$winnerOf, &$sideTeam, $tieById, $resultByTie, &$winnerCache, &$resolving): ?TeamRef {
             if (array_key_exists($tieId, $winnerCache)) {
                 return $winnerCache[$tieId];
             }
             if (isset($resolving[$tieId])) {
-                throw new RuntimeException("Chaveamento cíclico detectado no confronto {$tieId}.");
+                throw new RuntimeException("Cyclic bracket structure detected in tie {$tieId}.");
             }
             if (! isset($tieById[$tieId])) {
-                throw new RuntimeException("Confronto {$tieId} referenciado mas inexistente.");
+                throw new RuntimeException("Tie {$tieId} is referenced but does not exist.");
             }
 
             $resolving[$tieId] = true;
@@ -82,7 +72,7 @@ final class BracketResolver
                 : $winnerOf($source->tieId);
         };
 
-        // visão resolvida de cada confronto
+        // resolved view of each tie
         $resolved = [];
         foreach ($ties as $tie) {
             $home = $sideTeam($tie->home);
@@ -107,7 +97,7 @@ final class BracketResolver
 
         usort($resolved, static fn (ResolvedTie $a, ResolvedTie $b) => [$a->round, $a->id] <=> [$b->round, $b->id]);
 
-        // a final é o confronto que ninguém consome (raiz da árvore); maior rodada como desempate
+        // the final is the tie that nobody consumes (root of the tree); highest round as tiebreaker
         $consumed = [];
         foreach ($ties as $tie) {
             foreach ([$tie->home, $tie->away] as $source) {

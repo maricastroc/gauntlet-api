@@ -7,21 +7,21 @@ namespace App\Domain\Tournament\Bracket;
 use App\Domain\Tournament\Input\TeamRef;
 
 /**
- * A visão resolvida de um confronto — o que a UI consome. Value object imutável.
+ * The resolved view of a tie — what the UI consumes. Immutable value object.
  *
  * status:
- *  - 'pending'  algum lado ainda é desconhecido (o confronto de origem não terminou)
- *  - 'ready'    ambos os times definidos, sem resultado ainda
- *  - 'decided'  há vencedor
+ *  - 'pending'  one side is still unknown (the source tie has not finished)
+ *  - 'ready'    both teams defined, no result yet
+ *  - 'decided'  there is a winner
  */
 final class ResolvedTie
 {
     public function __construct(
         public readonly int $id,
         public readonly int $round,
-        public readonly ?TeamRef $home,      // null = a definir
-        public readonly ?TeamRef $away,      // null = a definir
-        public readonly ?TeamRef $winner,    // null = ainda não decidido
+        public readonly ?TeamRef $home,      // null = to be determined (TBD)
+        public readonly ?TeamRef $away,      // null = to be determined (TBD)
+        public readonly ?TeamRef $winner,    // null = not decided yet
         public readonly string $status,
         public readonly bool $decidedByPenalties,
     ) {}

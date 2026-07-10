@@ -14,9 +14,9 @@ use App\Models\Group;
 use App\Models\Team;
 
 /**
- * A borda de LEITURA: mapeia um grupo (Eloquent) para os DTOs do Domain e delega
- * o cálculo à engine pura. Reutilizada tanto pela escrita (ConfirmMatchResult)
- * quanto pelo endpoint de leitura da classificação — a tradução mora num lugar só.
+ * The READ boundary: maps a group (Eloquent) to the Domain DTOs and delegates
+ * the computation to the pure engine. Reused both by the write path (ConfirmMatchResult)
+ * and by the standings read endpoint — the translation lives in a single place.
  */
 final class ComputeGroupStandings
 {

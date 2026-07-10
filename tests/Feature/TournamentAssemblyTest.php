@@ -13,7 +13,6 @@ use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
 
-/** Cria um torneio com 8 times (4 grupos de 2) pertencente a $owner. */
 function ownedTournamentWithTeams(User $owner): array
 {
     $tournament = Tournament::create(['user_id' => $owner->id, 'name' => 'My Cup']);
@@ -37,13 +36,11 @@ function fourGroupsPayload($teams): array
     ];
 }
 
-/* -------------------------- create / list -------------------------- */
-
-test('criar torneio exige autenticação', function () {
+test('creating a tournament requires authentication', function () {
     $this->postJson('/api/tournaments', ['name' => 'My Cup'])->assertUnauthorized();
 });
 
-test('o organizador cria um torneio em rascunho', function () {
+test('the owner creates a draft tournament', function () {
     Sanctum::actingAs($owner = User::factory()->create());
 
     $this->postJson('/api/tournaments', ['name' => 'My Cup'])
@@ -54,13 +51,13 @@ test('o organizador cria um torneio em rascunho', function () {
     expect(Tournament::where('user_id', $owner->id)->where('name', 'My Cup')->exists())->toBeTrue();
 });
 
-test('nome vazio é rejeitado (422)', function () {
+test('an empty name is rejected (422)', function () {
     Sanctum::actingAs(User::factory()->create());
 
     $this->postJson('/api/tournaments', ['name' => ''])->assertStatus(422);
 });
 
-test('a listagem traz só os torneios do organizador', function () {
+test('the listing returns only the owner tournaments', function () {
     $owner = User::factory()->create();
     Tournament::create(['user_id' => $owner->id, 'name' => 'Mine 1']);
     Tournament::create(['user_id' => $owner->id, 'name' => 'Mine 2']);
@@ -70,9 +67,7 @@ test('a listagem traz só os torneios do organizador', function () {
     $this->getJson('/api/tournaments')->assertOk()->assertJsonCount(2, 'data');
 });
 
-/* -------------------------- teams -------------------------- */
-
-test('quem não é dono não adiciona times (403)', function () {
+test('a non-owner cannot add teams (403)', function () {
     $tournament = Tournament::create(['user_id' => User::factory()->create()->id, 'name' => 'My Cup']);
     Sanctum::actingAs(User::factory()->create());
 
@@ -81,7 +76,7 @@ test('quem não é dono não adiciona times (403)', function () {
     ])->assertForbidden();
 });
 
-test('o dono adiciona times em lote', function () {
+test('the owner adds teams in bulk', function () {
     Sanctum::actingAs($owner = User::factory()->create());
     $tournament = Tournament::create(['user_id' => $owner->id, 'name' => 'My Cup']);
 
@@ -95,9 +90,7 @@ test('o dono adiciona times em lote', function () {
     expect(Team::where('tournament_id', $tournament->id)->count())->toBe(2);
 });
 
-/* -------------------------- group stage -------------------------- */
-
-test('monta a fase de grupos e gera o returno-único', function () {
+test('builds the group stage and generates the single round-robin', function () {
     Sanctum::actingAs($owner = User::factory()->create());
     [$tournament, $teams] = ownedTournamentWithTeams($owner);
 
@@ -107,13 +100,12 @@ test('monta a fase de grupos e gera o returno-único', function () {
         ->assertJsonPath('data.stages.0.type', 'group')
         ->assertJsonCount(4, 'data.stages.0.groups');
 
-    // 4 grupos de 2 => 1 jogo por grupo => 4 jogos, todos 'scheduled'
     expect(Fixture::where('tournament_id', $tournament->id)->count())->toBe(4);
     expect(Fixture::where('tournament_id', $tournament->id)->where('status', 'scheduled')->count())->toBe(4);
     expect($tournament->fresh()->status)->toBe('active');
 });
 
-test('não deixa montar a fase de grupos duas vezes (422)', function () {
+test('does not allow building the group stage twice (422)', function () {
     Sanctum::actingAs($owner = User::factory()->create());
     [$tournament, $teams] = ownedTournamentWithTeams($owner);
 
@@ -121,7 +113,7 @@ test('não deixa montar a fase de grupos duas vezes (422)', function () {
     $this->postJson("/api/tournaments/{$tournament->id}/group-stage", fourGroupsPayload($teams))->assertStatus(422);
 });
 
-test('rejeita team_ids de outro torneio', function () {
+test('rejects team_ids from another tournament', function () {
     Sanctum::actingAs($owner = User::factory()->create());
     [$tournament] = ownedTournamentWithTeams($owner);
     $foreign = Team::create(['tournament_id' => Tournament::create(['user_id' => $owner->id, 'name' => 'Other'])->id, 'name' => 'X']);
@@ -132,9 +124,7 @@ test('rejeita team_ids de outro torneio', function () {
     ])->assertStatus(422);
 });
 
-/* -------------------------- knockout -------------------------- */
-
-test('gera o mata-mata a partir dos grupos, com winner: resolvido para ids reais', function () {
+test('generates the knockout from the groups, with winner: resolved to real ids', function () {
     Sanctum::actingAs($owner = User::factory()->create());
     [$tournament, $teams] = ownedTournamentWithTeams($owner);
     $this->postJson("/api/tournaments/{$tournament->id}/group-stage", fourGroupsPayload($teams))->assertOk();
@@ -142,38 +132,32 @@ test('gera o mata-mata a partir dos grupos, com winner: resolvido para ids reais
     $this->postJson("/api/tournaments/{$tournament->id}/knockout")
         ->assertOk()
         ->assertJsonPath('data.stages.1.type', 'knockout')
-        ->assertJsonCount(7, 'data.stages.1.ties'); // 4 QF + 2 SF + 1 final
+        ->assertJsonCount(7, 'data.stages.1.ties'); 
 
     $knockout = Stage::where('tournament_id', $tournament->id)->where('type', 'knockout')->firstOrFail();
     $ties = Tie::where('stage_id', $knockout->id)->get();
 
-    // quartas semeadas por grupo
     $qf1 = $ties->firstWhere(fn (Tie $t) => $t->round === 1 && $t->slot === 1);
     expect($qf1->home_source)->toBe('seed:A1')->and($qf1->away_source)->toBe('seed:B2');
 
-    // semifinal referencia ids REAIS das quartas, não placeholders
     $sf1 = $ties->firstWhere(fn (Tie $t) => $t->round === 2 && $t->slot === 1);
     $slot1 = $ties->firstWhere(fn (Tie $t) => $t->round === 1 && $t->slot === 1)->id;
     $slot2 = $ties->firstWhere(fn (Tie $t) => $t->round === 1 && $t->slot === 2)->id;
     expect($sf1->home_source)->toBe("winner:{$slot1}")->and($sf1->away_source)->toBe("winner:{$slot2}");
 
-    // um jogo 'scheduled' por tie
     expect(Fixture::where('stage_id', $knockout->id)->count())->toBe(7);
 });
 
-test('não gera mata-mata sem fase de grupos (422)', function () {
+test('does not generate the knockout without a group stage (422)', function () {
     Sanctum::actingAs($owner = User::factory()->create());
     $tournament = Tournament::create(['user_id' => $owner->id, 'name' => 'Empty']);
 
     $this->postJson("/api/tournaments/{$tournament->id}/knockout")->assertStatus(422);
 });
 
-/* -------------------------- detail read -------------------------- */
-
-test('a visão completa do torneio é pública (visão torcedor)', function () {
+test('the full tournament view is public (fan view)', function () {
     $owner = User::factory()->create();
     [$tournament, $teams] = ownedTournamentWithTeams($owner);
-    // monta direto pela Action (sem autenticar), depois lê sem token
     app(\App\Actions\Tournament\BuildGroupStage::class)->handle($tournament, 2, [
         ['name' => 'A', 'team_ids' => [$teams[0]->id, $teams[1]->id]],
         ['name' => 'B', 'team_ids' => [$teams[2]->id, $teams[3]->id]],
@@ -187,7 +171,7 @@ test('a visão completa do torneio é pública (visão torcedor)', function () {
         ->assertJsonCount(8, 'data.teams');
 });
 
-test('a visão completa expõe jogos com versão para o console', function () {
+test('the full view exposes matches with a version for the console', function () {
     Sanctum::actingAs($owner = User::factory()->create());
     [$tournament, $teams] = ownedTournamentWithTeams($owner);
     $this->postJson("/api/tournaments/{$tournament->id}/group-stage", fourGroupsPayload($teams))->assertOk();

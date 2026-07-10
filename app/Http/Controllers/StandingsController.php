@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 final class StandingsController extends Controller
 {
-    /** Leitura pública: a classificação atual de um grupo (projeção das partidas). */
+    /** Public read: the current standings of a group (projection from the matches). */
     public function show(Group $group, ComputeGroupStandings $standings): AnonymousResourceCollection
     {
         return StandingResource::collection($standings->for($group));

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Tournament\Standings;
 
 /**
- * A cadeia ordenada de critérios de desempate.
- * Construtores nomeados por regulamento; ::of() para cenários de teste.
+ * The ordered chain of tiebreaker criteria.
+ * Named constructors per rulebook; ::of() for test scenarios.
  */
 final class TiebreakRules
 {
@@ -14,9 +14,9 @@ final class TiebreakRules
     private function __construct(public readonly array $criteria) {}
 
     /**
-     * Ordem estilo Copa do Mundo: pontos, saldo geral, gols pró geral,
-     * depois confronto direto entre os empatados e, por fim, número de vitórias.
-     * (Fair play e sorteio ficam fora da engine pura — um é dado externo, o outro é aleatório.)
+     * World Cup style order: points, overall goal difference, overall goals for,
+     * then head-to-head among the tied teams and, finally, number of wins.
+     * (Fair play and drawing of lots stay out of the pure engine — one is external data, the other is random.)
      */
     public static function fifa(): self
     {

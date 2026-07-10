@@ -11,10 +11,6 @@ use Illuminate\Support\Facades\Gate;
 
 final class KnockoutController extends Controller
 {
-    /**
-     * Gera o mata-mata a partir da fase de grupos e devolve o torneio completo.
-     * Só o dono. Recusa (422) se não houver grupos ou a chave não fechar.
-     */
     public function store(Tournament $tournament, BuildKnockout $action): TournamentDetailResource
     {
         Gate::authorize('manage', $tournament);

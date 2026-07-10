@@ -9,7 +9,7 @@ use App\Domain\Tournament\Bracket\Tie;
 use App\Domain\Tournament\Bracket\TieResult;
 use App\Domain\Tournament\Input\TeamRef;
 
-/** Topologia padrão: 4 quartas -> 2 semis -> 1 final. */
+/** Standard topology: 4 quarterfinals -> 2 semifinals -> 1 final. */
 function knockoutTies(): array
 {
     return [
@@ -41,11 +41,11 @@ function fullResults(): array
 {
     return [
         new TieResult(1, 3, 1),
-        new TieResult(2, 2, 2, 4, 3), // pênaltis
+        new TieResult(2, 2, 2, 4, 3), // penalties
         new TieResult(3, 1, 0),
         new TieResult(4, 0, 2),
         new TieResult(5, 2, 1),
-        new TieResult(6, 1, 1, 5, 4), // pênaltis
+        new TieResult(6, 1, 1, 5, 4), // penalties
         new TieResult(7, 1, 0),
     ];
 }
@@ -56,7 +56,7 @@ function tiesById(array $resolved): array
     return collect($resolved['ties'])->keyBy('id')->all();
 }
 
-test('deriva participantes das rodadas seguintes a partir dos vencedores', function () {
+test('derives participants of the following rounds from the winners', function () {
     $t = tiesById(BracketResolver::resolve(knockoutTies(), fullResults(), knockoutSeeds()));
 
     expect($t[5]->home->name)->toBe('Brasil')
@@ -65,7 +65,7 @@ test('deriva participantes das rodadas seguintes a partir dos vencedores', funct
         ->and($t[7]->away->name)->toBe('Argentina');
 });
 
-test('resolve confrontos decididos nos pênaltis', function () {
+test('resolves ties decided on penalties', function () {
     $t = tiesById(BracketResolver::resolve(knockoutTies(), fullResults(), knockoutSeeds()));
 
     expect($t[2]->decidedByPenalties)->toBeTrue()
@@ -74,13 +74,13 @@ test('resolve confrontos decididos nos pênaltis', function () {
         ->and($t[6]->winner->name)->toBe('Argentina');
 });
 
-test('elege o campeão como vencedor da final', function () {
+test('elects the champion as the winner of the final', function () {
     $result = BracketResolver::resolve(knockoutTies(), fullResults(), knockoutSeeds());
 
     expect($result['champion']->name)->toBe('Brasil');
 });
 
-test('propaga "a definir" quando um confronto de origem não terminou', function () {
+test('propagates "TBD" when a source tie has not finished', function () {
     $partial = array_values(array_filter(fullResults(), fn (TieResult $r) => ! in_array($r->tieId, [6, 7], true)));
     $t = tiesById(BracketResolver::resolve(knockoutTies(), $partial, knockoutSeeds()));
 
@@ -89,9 +89,9 @@ test('propaga "a definir" quando um confronto de origem não terminou', function
         ->and($t[7]->away)->toBeNull();
 });
 
-test('editar um resultado recomputa a árvore inteira (ripple)', function () {
+test('editing a result recomputes the entire tree (ripple)', function () {
     $edited = fullResults();
-    $edited[0] = new TieResult(1, 1, 3); // França vence a quarta 1 no lugar do Brasil
+    $edited[0] = new TieResult(1, 1, 3); // França wins quarterfinal 1 instead of Brasil
 
     $result = BracketResolver::resolve(knockoutTies(), $edited, knockoutSeeds());
     $t = tiesById($result);
@@ -101,7 +101,7 @@ test('editar um resultado recomputa a árvore inteira (ripple)', function () {
         ->and($result['champion']->name)->toBe('França');
 });
 
-test('vaga semeada ausente deixa o confronto pendente', function () {
+test('a missing seeded slot leaves the tie pending', function () {
     $seeds = knockoutSeeds();
     unset($seeds['B2']);
 
@@ -110,7 +110,7 @@ test('vaga semeada ausente deixa o confronto pendente', function () {
     expect($t[1]->status)->toBe('pending')->and($t[1]->away)->toBeNull();
 });
 
-test('chaveamento cíclico lança exceção em vez de entrar em loop', function () {
+test('a cyclic bracket throws an exception instead of looping', function () {
     $cyclic = [
         new Tie(1, 1, SlotSource::winnerOf(2), SlotSource::seed('A1')),
         new Tie(2, 1, SlotSource::winnerOf(1), SlotSource::seed('A2')),

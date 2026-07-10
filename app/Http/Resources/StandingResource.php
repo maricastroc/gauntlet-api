@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Formata uma linha da classificação (value object do Domain) para JSON.
+ * Formats a standings row (Domain value object) as JSON.
  *
  * @property-read Standing $resource
  */

@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Domain\Tournament\Bracket;
 
 /**
- * De onde vem um lado de um confronto: ou uma vaga semeada da fase de grupos
- * (ex.: "A1" = 1º do grupo A), ou o vencedor de um confronto anterior.
+ * Where a side of a tie comes from: either a seeded slot from the group stage
+ * (e.g. "A1" = 1st of group A), or the winner of a previous tie.
  *
- * Isso torna o bracket uma TOPOLOGIA: "quem está na vaga X" é derivável andando
- * pelos sources, não um campo que se reescreve.
+ * This makes the bracket a TOPOLOGY: "who is in slot X" is derivable by walking
+ * through the sources, not a field that gets rewritten.
  */
 final class SlotSource
 {
     private function __construct(
         public readonly string $kind,   // 'seed' | 'winner'
-        public readonly ?string $seed,  // ex.: 'A1' quando kind = seed
-        public readonly ?int $tieId,    // id do confronto de origem quando kind = winner
+        public readonly ?string $seed,  // e.g. 'A1' when kind = seed
+        public readonly ?int $tieId,    // id of the source tie when kind = winner
     ) {}
 
     public static function seed(string $key): self

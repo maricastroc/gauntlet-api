@@ -10,7 +10,6 @@ use App\Models\Stage;
 
 final class BracketController extends Controller
 {
-    /** Leitura pública: o chaveamento resolvido de uma fase de mata-mata. */
     public function show(Stage $stage, ResolveBracket $bracket): BracketResource
     {
         return new BracketResource($bracket->for($stage));

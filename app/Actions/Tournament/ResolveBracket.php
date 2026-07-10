@@ -14,13 +14,6 @@ use App\Models\Fixture;
 use App\Models\Stage;
 use App\Models\Tie;
 
-/**
- * A borda de LEITURA do mata-mata: monta a topologia e os resultados (Eloquent) e
- * as sementes (a partir da classificação dos grupos) e delega ao BracketResolver puro.
- *
- * O chaveamento é derivado: nada de "quem avançou" fica gravado — é recomputado da
- * topologia + resultados. As sementes 'A1', 'B2'... vêm da projeção dos grupos.
- */
 final class ResolveBracket
 {
     public function __construct(private readonly ComputeGroupStandings $standings = new ComputeGroupStandings) {}

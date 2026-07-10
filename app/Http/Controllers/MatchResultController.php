@@ -15,12 +15,6 @@ use Illuminate\Support\Facades\Gate;
 
 final class MatchResultController extends Controller
 {
-    /**
-     * Lança/edita o resultado de um jogo e devolve a projeção recalculada:
-     * jogo de grupo -> classificação; jogo de mata-mata -> chaveamento.
-     *
-     * Só o organizador do torneio pode; conflito de versão vira 409 (StaleResultException).
-     */
     public function update(
         ConfirmMatchResultRequest $request,
         Fixture $fixture,

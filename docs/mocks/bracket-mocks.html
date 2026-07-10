@@ -1,7 +1,7 @@
-<title>Bracket — mocks de operação de torneio</title>
+<title>Bracket — tournament operation mocks</title>
 <style>
   :root {
-    /* ground: tinta de estádio à noite, viés azul-esverdeado — escolhida, não preta */
+    /* ground: night-stadium ink, blue-green bias — chosen, not black */
     --ground: #0E1518;
     --surface: #141E22;
     --surface-2: #1B272C;
@@ -13,16 +13,16 @@
     --ink-dim: #AEBAB7;
     --ink-mute: #6E7C79;
 
-    /* acento único: âmbar de refletor de sódio */
+    /* single accent: sodium-floodlight amber */
     --amber: #F2A93B;
     --amber-ink: #FFC978;
     --amber-soft: rgba(242, 169, 59, 0.13);
     --amber-line: rgba(242, 169, 59, 0.38);
 
-    /* ouro: só para o troféu / campeão */
+    /* gold: only for the trophy / champion */
     --gold: #E7C66A;
 
-    /* semânticos — só nos chips de resultado, separados do acento */
+    /* semantic — only on result chips, separate from the accent */
     --win: #55B87E;
     --draw: #7C8A87;
     --loss: #E06B62;
@@ -544,25 +544,25 @@
 
 <div class="deck">
   <header class="deck-head">
-    <p class="eyebrow">Mock de conceito · Bracket</p>
-    <h1 class="deck-title">Operar um torneio como quem <em>narra</em> um.</h1>
-    <p class="deck-sub">Três telas de alta fidelidade da ferramenta de operação de torneios. O coração do produto não é a estética — é o <b>estado derivado sempre correto</b>: classificação, critérios de desempate e avanço de chave que se recalculam, em transação, a cada resultado lançado. Estas telas mostram como isso aparece para quem opera.</p>
+    <p class="eyebrow">Concept mock · Bracket</p>
+    <h1 class="deck-title">Operate a tournament the way you <em>commentate</em> one.</h1>
+    <p class="deck-sub">Three high-fidelity screens of the tournament operation tool. The heart of the product isn't the aesthetics — it's the <b>always-correct derived state</b>: standings, tiebreak criteria and bracket advancement that recalculate, in a transaction, with every result entered. These screens show how that appears to whoever operates it.</p>
   </header>
 
   <!-- ================= SCREEN 1 — OVERVIEW ================= -->
   <section class="screen">
     <div class="screen-cap">
       <span class="cap-no">01</span>
-      <span class="cap-title">Visão geral da rodada</span>
-      <span class="cap-note">— classificação ao vivo, linha de classificação e desempate explícito</span>
+      <span class="cap-title">Round overview</span>
+      <span class="cap-note">— live standings, qualification line and explicit tiebreak</span>
     </div>
 
     <div class="app">
-      <nav class="rail" aria-label="Navegação">
+      <nav class="rail" aria-label="Navigation">
         <div class="mark">B</div>
-        <div class="rail-btn on" title="Visão geral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
-        <div class="rail-btn" title="Grupos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
-        <div class="rail-btn" title="Chaveamento"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h6v14H4M10 12h5M15 5h5M15 19h5"/></svg></div>
+        <div class="rail-btn on" title="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
+        <div class="rail-btn" title="Groups"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+        <div class="rail-btn" title="Bracket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h6v14H4M10 12h5M15 5h5M15 19h5"/></svg></div>
         <div class="rail-btn" title="Console"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4" fill="var(--surface)"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4" fill="var(--surface)"/></svg></div>
         <div class="rail-spacer"></div>
       </nav>
@@ -571,12 +571,12 @@
         <div class="topbar">
           <div class="tb-id">
             <div class="tb-name"><span class="trophy">🏆</span> Copa Atlas 2026</div>
-            <div class="tb-phase">Fase de grupos · Rodada 2 de 3</div>
+            <div class="tb-phase">Group stage · Round 2 of 3</div>
           </div>
           <div class="tb-spacer"></div>
           <div class="phase-pills">
-            <span class="pp now">Grupos</span>
-            <span class="pp">Quartas</span>
+            <span class="pp now">Groups</span>
+            <span class="pp">Quarterfinals</span>
             <span class="pp">Semis</span>
             <span class="pp">Final</span>
           </div>
@@ -584,17 +584,17 @@
 
         <div class="ov">
           <div class="ov-left">
-            <p class="block-label">Classificação <span class="grp">Grupo A</span></p>
+            <p class="block-label">Standings <span class="grp">Group A</span></p>
             <div class="table-wrap">
               <table class="stand">
                 <thead>
                   <tr>
                     <th class="pos">#</th>
-                    <th class="club">Clube</th>
-                    <th>J</th><th>V</th><th>E</th><th>D</th>
-                    <th>GP</th><th>GC</th><th>SG</th>
+                    <th class="club">Club</th>
+                    <th>P</th><th>W</th><th>D</th><th>L</th>
+                    <th>GF</th><th>GA</th><th>GD</th>
                     <th>Pts</th>
-                    <th>Últimos</th>
+                    <th>Recent</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -604,7 +604,7 @@
                     <td>2</td><td>1</td><td>1</td><td>0</td>
                     <td>3</td><td>1</td><td class="gd"><span class="up">+2</span></td>
                     <td class="pts">4</td>
-                    <td><span class="form"><span class="fc w">V</span><span class="fc d">E</span></span></td>
+                    <td><span class="form"><span class="fc w">W</span><span class="fc d">D</span></span></td>
                   </tr>
                   <tr class="q">
                     <td class="pos">2</td>
@@ -612,12 +612,12 @@
                     <td>2</td><td>1</td><td>1</td><td>0</td>
                     <td>3</td><td>2</td><td class="gd"><span class="up">+1</span></td>
                     <td class="pts">4</td>
-                    <td><span class="form"><span class="fc d">E</span><span class="fc w">V</span></span></td>
+                    <td><span class="form"><span class="fc d">D</span><span class="fc w">W</span></span></td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div class="qline"><span class="txt">Zona de classificação — Quartas</span><span class="ln"></span></div>
+            <div class="qline"><span class="txt">Qualification zone — Quarterfinals</span><span class="ln"></span></div>
             <div class="table-wrap">
               <table class="stand">
                 <tbody>
@@ -627,7 +627,7 @@
                     <td>2</td><td>0</td><td>2</td><td>0</td>
                     <td>2</td><td>2</td><td class="gd">0</td>
                     <td class="pts">2</td>
-                    <td><span class="form"><span class="fc d">E</span><span class="fc d">E</span></span></td>
+                    <td><span class="form"><span class="fc d">D</span><span class="fc d">D</span></span></td>
                   </tr>
                   <tr>
                     <td class="pos">4</td>
@@ -635,7 +635,7 @@
                     <td>2</td><td>0</td><td>0</td><td>2</td>
                     <td>1</td><td>4</td><td class="gd"><span class="dn">−3</span></td>
                     <td class="pts">0</td>
-                    <td><span class="form"><span class="fc l">D</span><span class="fc l">D</span></span></td>
+                    <td><span class="form"><span class="fc l">L</span><span class="fc l">L</span></span></td>
                   </tr>
                 </tbody>
               </table>
@@ -643,15 +643,15 @@
 
             <div class="tiebreak">
               <span class="di">◆</span>
-              <div><b>Brasil</b> e <b>Japão</b> empatados em <span class="mono">4 pts</span>. Brasil lidera pelo <b>saldo de gols</b> — <span class="mono">+2 × +1</span>. O confronto direto ainda não aconteceu e decide a ponta na próxima rodada.</div>
+              <div><b>Brasil</b> and <b>Japão</b> tied on <span class="mono">4 pts</span>. Brasil leads on <b>goal difference</b> — <span class="mono">+2 × +1</span>. The head-to-head hasn't happened yet and decides the top spot next round.</div>
             </div>
           </div>
 
           <div class="ov-right">
             <div class="card live-card">
               <div class="card-top">
-                <span class="card-kick">Grupo C · em campo</span>
-                <span class="live"><span class="dot"></span>AO VIVO</span>
+                <span class="card-kick">Group C · on the pitch</span>
+                <span class="live"><span class="dot"></span>LIVE</span>
               </div>
               <div class="fixture">
                 <div class="fx-team"><span class="flag">🇦🇷</span>Argentina</div>
@@ -661,19 +661,19 @@
             </div>
 
             <div class="card">
-              <div class="card-top"><span class="card-kick">Próximo · decide a liderança</span></div>
+              <div class="card-top"><span class="card-kick">Next · decides the lead</span></div>
               <div class="next-row">
                 <div class="fx-team"><span class="flag">🇧🇷</span>Brasil</div>
                 <div class="next-vs">×</div>
                 <div class="fx-team away"><span class="flag">🇯🇵</span>Japão</div>
               </div>
-              <div class="decider">Dom · 16:00 — quem vencer termina em <b>1º</b>; empate mantém o Brasil à frente pelo saldo.</div>
+              <div class="decider">Sun · 16:00 — the winner finishes <b>1st</b>; a draw keeps Brasil ahead on goal difference.</div>
             </div>
 
             <div class="stat-row">
-              <div class="stat"><div class="n">18</div><div class="l">Jogos disputados</div></div>
-              <div class="stat"><div class="n">2.4</div><div class="l">Gols por jogo</div></div>
-              <div class="stat"><div class="n">6</div><div class="l">Grupos ativos</div></div>
+              <div class="stat"><div class="n">18</div><div class="l">Matches played</div></div>
+              <div class="stat"><div class="n">2.4</div><div class="l">Goals per match</div></div>
+              <div class="stat"><div class="n">6</div><div class="l">Active groups</div></div>
             </div>
           </div>
         </div>
@@ -685,16 +685,16 @@
   <section class="screen">
     <div class="screen-cap">
       <span class="cap-no">02</span>
-      <span class="cap-title">Chaveamento eliminatório</span>
-      <span class="cap-note">— avanço automático, jogo ao vivo, decisão por pênaltis e vaga do campeão</span>
+      <span class="cap-title">Knockout bracket</span>
+      <span class="cap-note">— automatic advancement, live match, penalty shootout and champion's slot</span>
     </div>
 
     <div class="app">
-      <nav class="rail" aria-label="Navegação">
+      <nav class="rail" aria-label="Navigation">
         <div class="mark">B</div>
-        <div class="rail-btn" title="Visão geral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
-        <div class="rail-btn" title="Grupos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
-        <div class="rail-btn on" title="Chaveamento"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h6v14H4M10 12h5M15 5h5M15 19h5"/></svg></div>
+        <div class="rail-btn" title="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
+        <div class="rail-btn" title="Groups"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+        <div class="rail-btn on" title="Bracket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h6v14H4M10 12h5M15 5h5M15 19h5"/></svg></div>
         <div class="rail-btn" title="Console"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4" fill="var(--surface)"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4" fill="var(--surface)"/></svg></div>
         <div class="rail-spacer"></div>
       </nav>
@@ -703,12 +703,12 @@
         <div class="topbar">
           <div class="tb-id">
             <div class="tb-name"><span class="trophy">🏆</span> Copa Atlas 2026</div>
-            <div class="tb-phase">Mata-mata · Quartas de final</div>
+            <div class="tb-phase">Knockout · Quarterfinals</div>
           </div>
           <div class="tb-spacer"></div>
           <div class="phase-pills">
-            <span class="pp done">Grupos</span>
-            <span class="pp now">Quartas</span>
+            <span class="pp done">Groups</span>
+            <span class="pp now">Quarterfinals</span>
             <span class="pp">Semis</span>
             <span class="pp">Final</span>
           </div>
@@ -718,13 +718,13 @@
           <div class="bracket-scroll">
             <div class="bracket">
               <div class="round">
-                <div class="round-hd">Quartas</div>
+                <div class="round-hd">Quarterfinals</div>
                 <div class="mtch">
                   <div class="side win"><span class="flag">🇧🇷</span><span class="nm">Brasil</span><span class="sc">3</span></div>
                   <div class="side out"><span class="flag">🇵🇹</span><span class="nm">Portugal</span><span class="sc">1</span></div>
                 </div>
                 <div class="mtch livem">
-                  <span class="mtch-tag lv">● ao vivo 78'</span>
+                  <span class="mtch-tag lv">● live 78'</span>
                   <div class="side"><span class="flag">🇦🇷</span><span class="nm">Argentina</span><span class="sc">1</span></div>
                   <div class="side"><span class="flag">🇫🇷</span><span class="nm">França</span><span class="sc">1</span></div>
                 </div>
@@ -733,34 +733,34 @@
                   <div class="side out"><span class="flag">🇳🇱</span><span class="nm">Países Baixos</span><span class="sc">2</span><span class="pen">(3)</span></div>
                 </div>
                 <div class="mtch">
-                  <span class="mtch-tag">Sáb 21:00</span>
+                  <span class="mtch-tag">Sat 21:00</span>
                   <div class="side"><span class="flag">🇮🇹</span><span class="nm">Itália</span><span class="sc">–</span></div>
                   <div class="side"><span class="flag">🇩🇪</span><span class="nm">Alemanha</span><span class="sc">–</span></div>
                 </div>
               </div>
 
               <div class="round">
-                <div class="round-hd">Semifinais</div>
+                <div class="round-hd">Semifinals</div>
                 <div class="mtch">
                   <div class="side win"><span class="flag">🇧🇷</span><span class="nm">Brasil</span><span class="sc">–</span></div>
-                  <div class="side tbd"><span class="flag">⚑</span><span class="nm">Vencedor QF2</span><span class="sc">–</span></div>
+                  <div class="side tbd"><span class="flag">⚑</span><span class="nm">Winner QF2</span><span class="sc">–</span></div>
                 </div>
                 <div class="mtch">
                   <div class="side win"><span class="flag">🇪🇸</span><span class="nm">Espanha</span><span class="sc">–</span></div>
-                  <div class="side tbd"><span class="flag">⚑</span><span class="nm">Vencedor QF4</span><span class="sc">–</span></div>
+                  <div class="side tbd"><span class="flag">⚑</span><span class="nm">Winner QF4</span><span class="sc">–</span></div>
                 </div>
               </div>
 
               <div class="round final-col">
                 <div class="round-hd">Final</div>
                 <div class="mtch">
-                  <div class="side tbd"><span class="flag">⚑</span><span class="nm">Vencedor SF1</span><span class="sc">–</span></div>
-                  <div class="side tbd"><span class="flag">⚑</span><span class="nm">Vencedor SF2</span><span class="sc">–</span></div>
+                  <div class="side tbd"><span class="flag">⚑</span><span class="nm">Winner SF1</span><span class="sc">–</span></div>
+                  <div class="side tbd"><span class="flag">⚑</span><span class="nm">Winner SF2</span><span class="sc">–</span></div>
                 </div>
                 <div class="champ" style="margin-top:16px">
                   <div class="cup">🏆</div>
-                  <div class="cl">Campeão</div>
-                  <div class="cw">a definir</div>
+                  <div class="cl">Champion</div>
+                  <div class="cw">TBD</div>
                 </div>
               </div>
             </div>
@@ -774,16 +774,16 @@
   <section class="screen">
     <div class="screen-cap">
       <span class="cap-no">03</span>
-      <span class="cap-title">Console da partida</span>
-      <span class="cap-note">— editar um resultado e ver a consequência recalcular antes de confirmar</span>
+      <span class="cap-title">Match console</span>
+      <span class="cap-note">— edit a result and watch the consequence recalculate before confirming</span>
     </div>
 
     <div class="app">
-      <nav class="rail" aria-label="Navegação">
+      <nav class="rail" aria-label="Navigation">
         <div class="mark">B</div>
-        <div class="rail-btn" title="Visão geral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
-        <div class="rail-btn" title="Grupos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
-        <div class="rail-btn" title="Chaveamento"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h6v14H4M10 12h5M15 5h5M15 19h5"/></svg></div>
+        <div class="rail-btn" title="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
+        <div class="rail-btn" title="Groups"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+        <div class="rail-btn" title="Bracket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h6v14H4M10 12h5M15 5h5M15 19h5"/></svg></div>
         <div class="rail-btn on" title="Console"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4" fill="var(--surface)"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4" fill="var(--surface)"/></svg></div>
         <div class="rail-spacer"></div>
       </nav>
@@ -792,89 +792,89 @@
         <div class="topbar">
           <div class="tb-id">
             <div class="tb-name"><span class="trophy">🏆</span> Copa Atlas 2026</div>
-            <div class="tb-phase">Console · Grupo A · Rodada 2</div>
+            <div class="tb-phase">Console · Group A · Round 2</div>
           </div>
           <div class="tb-spacer"></div>
-          <span class="pp" style="color:var(--ink-dim)">Editando resultado</span>
+          <span class="pp" style="color:var(--ink-dim)">Editing result</span>
         </div>
 
         <div class="console-body">
           <div class="con-left">
-            <p class="block-label">Registrar resultado</p>
+            <p class="block-label">Record result</p>
             <div class="con-match">
               <div class="con-team">
                 <span class="flag">🇧🇷</span><span class="nm">Brasil</span>
                 <div class="stepper">
-                  <button aria-label="Menos">−</button>
+                  <button aria-label="Minus">−</button>
                   <span class="val">2</span>
-                  <button aria-label="Mais">+</button>
+                  <button aria-label="Plus">+</button>
                 </div>
               </div>
               <div class="con-x">×</div>
               <div class="con-team">
                 <span class="flag">🇭🇷</span><span class="nm">Croácia</span>
                 <div class="stepper">
-                  <button aria-label="Menos">−</button>
+                  <button aria-label="Minus">−</button>
                   <span class="val">1</span>
-                  <button aria-label="Mais">+</button>
+                  <button aria-label="Plus">+</button>
                 </div>
               </div>
             </div>
 
             <div class="field">
-              <label>Situação</label>
+              <label>Status</label>
               <div class="seg">
-                <button>1º tempo</button>
-                <button>Intervalo</button>
-                <button class="sel">Encerrado</button>
+                <button>1st half</button>
+                <button>Half-time</button>
+                <button class="sel">Finished</button>
               </div>
             </div>
 
-            <button class="btn-primary">Confirmar resultado</button>
-            <p class="btn-note">era 1 – 1 · alterado para 2 – 1</p>
+            <button class="btn-primary">Confirm result</button>
+            <p class="btn-note">was 1 – 1 · changed to 2 – 1</p>
 
             <div class="tx-note">
               <span>⛓</span>
-              <div>Recálculo <b style="color:var(--ink-dim)">atômico</b>: a classificação, os critérios de desempate e as vagas do mata-mata são reescritos numa única transação — <code>a tabela nunca fica num estado parcial</code>.</div>
+              <div><b style="color:var(--ink-dim)">Atomic</b> recalculation: the standings, tiebreak criteria and knockout slots are rewritten in a single transaction — <code>the table is never left in a partial state</code>.</div>
             </div>
           </div>
 
           <div class="con-right">
-            <p class="preview-hd">◆ Consequência da edição</p>
-            <p class="preview-sub">O Grupo A é reordenado ao confirmar. Prévia antes de gravar:</p>
+            <p class="preview-hd">◆ Consequence of the edit</p>
+            <p class="preview-sub">Group A is reordered on confirm. Preview before saving:</p>
 
             <div class="delta">
               <div class="delta-row rise">
                 <span class="p">1</span>
                 <span class="t"><span class="flag">🇧🇷</span>Brasil</span>
-                <span class="move upr">▲ SG +2→+3</span>
+                <span class="move upr">▲ GD +2→+3</span>
                 <span class="ptsv">6</span>
               </div>
               <div class="delta-row fall">
                 <span class="p">2</span>
                 <span class="t"><span class="flag">🇯🇵</span>Japão</span>
-                <span class="move dnr">▼ 1º → 2º</span>
+                <span class="move dnr">▼ 1st → 2nd</span>
                 <span class="ptsv">4</span>
               </div>
               <div class="delta-row fall">
                 <span class="p">4</span>
                 <span class="t"><span class="flag">🇭🇷</span>Croácia</span>
-                <span class="move dnr">▼ 3º → 4º</span>
+                <span class="move dnr">▼ 3rd → 4th</span>
                 <span class="ptsv">2</span>
               </div>
               <div class="delta-row rise">
                 <span class="p">3</span>
                 <span class="t"><span class="flag">🇲🇦</span>Marrocos</span>
-                <span class="move upr">▲ 4º → 3º</span>
+                <span class="move upr">▲ 4th → 3rd</span>
                 <span class="ptsv">3</span>
               </div>
             </div>
 
             <div class="audit">
-              <div class="audit-hd">Histórico de auditoria</div>
-              <div class="audit-item"><span class="tm">12:04</span><span class="dt"></span><span>Prévia gerada — <b style="color:var(--ink)">Brasil 2 – 1 Croácia</b> · classificação recalculada</span></div>
-              <div class="audit-item mut"><span class="tm">11:47</span><span class="dt"></span><span>Resultado original lançado — Brasil 1 – 1 Croácia</span></div>
-              <div class="audit-item mut"><span class="tm">10:12</span><span class="dt"></span><span>Japão 2 – 1 Marrocos confirmado</span></div>
+              <div class="audit-hd">Audit trail</div>
+              <div class="audit-item"><span class="tm">12:04</span><span class="dt"></span><span>Preview generated — <b style="color:var(--ink)">Brasil 2 – 1 Croácia</b> · standings recalculated</span></div>
+              <div class="audit-item mut"><span class="tm">11:47</span><span class="dt"></span><span>Original result entered — Brasil 1 – 1 Croácia</span></div>
+              <div class="audit-item mut"><span class="tm">10:12</span><span class="dt"></span><span>Japão 2 – 1 Marrocos confirmed</span></div>
             </div>
           </div>
         </div>
@@ -883,6 +883,6 @@
   </section>
 
   <p class="deck-foot">
-    <b>Sobre o mock.</b> Dados fictícios; times reais só para dar textura. A tese destas telas é que o valor de engenharia não está na tabela em si, mas em mantê-la <b>sempre coerente</b> — o cenário da tela 03 (editar um resultado já lançado e ver o efeito propagar por desempate e chave, numa transação) é exatamente o que o back precisa garantir sob concorrência.
+    <b>About the mock.</b> Fictional data; real teams only to add texture. The thesis of these screens is that the engineering value isn't in the table itself, but in keeping it <b>always coherent</b> — the scenario in screen 03 (editing an already-entered result and watching the effect propagate through tiebreak and bracket, in a transaction) is exactly what the backend has to guarantee under concurrency.
   </p>
 </div>

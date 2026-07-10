@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Tournament\Input;
 
 /**
- * Referência mínima de um time — DTO puro de entrada da engine.
- * Não é o model Eloquent: só o que a engine precisa para ranquear.
+ * Minimal reference to a team — a pure input DTO for the engine.
+ * Not the Eloquent model: only what the engine needs to rank.
  */
 final class TeamRef
 {

@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Uma partida. O model se chama Fixture (não Match — palavra reservada no PHP 8+),
- * mapeado para a tabela `matches`.
+ * A match. The model is named Fixture (not Match — a reserved word in PHP 8+),
+ * mapped to the `matches` table.
  */
 class Fixture extends Model
 {

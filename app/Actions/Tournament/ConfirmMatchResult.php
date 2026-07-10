@@ -10,24 +10,24 @@ use App\Models\Fixture;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Grava (ou edita) o resultado de um jogo de grupo e devolve a classificação recalculada.
+ * Records (or edits) the result of a group match and returns the recomputed standings.
  *
- * É a fronteira de ESCRITA entre Laravel e o Domain puro:
- *   1. grava o placar sob lock OTIMISTA (só se a versão bater) — protege edição concorrente;
- *   2. recomputa a classificação delegando à engine pura (via ComputeGroupStandings);
- * tudo numa única transação, para a classificação nunca refletir um estado parcial.
+ * It is the WRITE boundary between Laravel and the pure Domain:
+ *   1. records the score under an OPTIMISTIC lock (only if the version matches) — protects against concurrent edits;
+ *   2. recomputes the standings by delegating to the pure engine (via ComputeGroupStandings);
+ * all in a single transaction, so the standings never reflect a partial state.
  *
- * A classificação em si não é gravada: é PROJEÇÃO das partidas. Editar um resultado é
- * só recomputar — não sincronizar estado.
+ * The standings themselves are not persisted: they are a PROJECTION of the matches. Editing a result is
+ * just a recompute — not a state sync.
  */
 final class ConfirmMatchResult
 {
     public function __construct(private readonly ComputeGroupStandings $standings = new ComputeGroupStandings) {}
 
     /**
-     * @return Standing[] a classificação recalculada do grupo do jogo
+     * @return Standing[] the recomputed standings of the match's group
      *
-     * @throws StaleResultException se outra pessoa alterou o jogo nesse meio-tempo
+     * @throws StaleResultException if someone else changed the match in the meantime
      */
     public function handle(Fixture $fixture, int $homeScore, int $awayScore, int $expectedVersion): array
     {

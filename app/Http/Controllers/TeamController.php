@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Gate;
 
 final class TeamController extends Controller
 {
-    /** Adiciona times ao torneio, em lote. Só o dono. */
+    /** Adds teams to the tournament, in batch. Owner only. */
     public function store(AddTeamsRequest $request, Tournament $tournament, AddTeams $action): JsonResponse
     {
         Gate::authorize('manage', $tournament);
