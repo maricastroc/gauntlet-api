@@ -1,0 +1,15 @@
+# Nixpacks build config for Railway (Laravel 13 / PHP 8.3)
+providers = ["php"]
+
+[phases.install]
+cmds = ["composer install --no-dev --optimize-autoloader --no-interaction"]
+
+[phases.build]
+cmds = [
+  "php artisan config:cache",
+  "php artisan route:cache",
+]
+
+# Run migrations, then start the Laravel server on Railway's $PORT
+[start]
+cmd = "php artisan migrate --force && php artisan serve --host 0.0.0.0 --port $PORT"
