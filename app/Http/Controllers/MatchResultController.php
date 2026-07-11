@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Tournament\ConfirmKnockoutResult;
 use App\Actions\Tournament\ConfirmMatchResult;
+use App\Exceptions\StaleResultException;
 use App\Http\Requests\ConfirmMatchResultRequest;
 use App\Http\Resources\BracketResource;
 use App\Http\Resources\StandingResource;
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Gate;
 
 final class MatchResultController extends Controller
 {
+    /**
+     * @throws StaleResultException on a version conflict (someone else saved this match first)
+     */
     public function update(
         ConfirmMatchResultRequest $request,
         Fixture $fixture,

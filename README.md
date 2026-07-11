@@ -78,6 +78,10 @@ may import `Illuminate\*` or `App\Models\*`.
 
 ## API
 
+Interactive OpenAPI docs (auto-generated from the code via [Scramble](https://scramble.dedoc.co/)) live at
+**`/docs/api`** — try-it console included. The raw OpenAPI 3.1 spec is at `/docs/api.json`, or export a
+static copy with `php artisan scramble:export`.
+
 | Method         | Route                                       | Auth  | What                                                                                                |
 | -------------- | ------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------- |
 | `POST`         | `/api/register` · `/api/login`              | —     | issues a Sanctum token (the demo login also provisions a per-session sandbox)                       |
