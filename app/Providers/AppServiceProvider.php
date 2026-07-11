@@ -20,12 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Unlocks the Scramble API docs outside local when the request carries
-        // the shared key (?key=<DOCS_KEY>). Local is always allowed upstream.
-        Gate::define('viewApiDocs', function ($user = null) {
-            $key = config('app.docs_key');
-
-            return filled($key) && hash_equals($key, (string) request('key'));
-        });
+        // The API docs are intentionally public (portfolio project), so allow
+        // access everywhere. Local is already allowed upstream by Scramble.
+        Gate::define('viewApiDocs', fn ($user = null) => true);
     }
 }

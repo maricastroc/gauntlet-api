@@ -78,9 +78,13 @@ may import `Illuminate\*` or `App\Models\*`.
 
 ## API
 
-Interactive OpenAPI docs (auto-generated from the code via [Scramble](https://scramble.dedoc.co/)) live at
-**`/docs/api`** — try-it console included. The raw OpenAPI 3.1 spec is at `/docs/api.json`, or export a
-static copy with `php artisan scramble:export`.
+Interactive OpenAPI docs (auto-generated from the code via [Scramble](https://scramble.dedoc.co/), rendered
+with [Scalar](https://scalar.com/)) are **public** and live at:
+
+- **Docs UI:** https://tournament-game-api-production.up.railway.app/docs/api — try-it console included
+- **OpenAPI 3.1 spec:** https://tournament-game-api-production.up.railway.app/docs/api.json
+
+Locally they're at `/docs/api` and `/docs/api.json`, or export a static copy with `php artisan scramble:export`.
 
 | Method         | Route                                       | Auth  | What                                                                                                |
 | -------------- | ------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------- |
