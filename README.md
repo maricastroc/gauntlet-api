@@ -55,18 +55,24 @@ may import `Illuminate\*` or `App\Models\*`.
       anything**; a hypothetical group result cascades into the bracket seeds. A public, unauthenticated read.
 - [x] Demo seeder: the full "Copa Atlas 2026" (4 decided groups + knockout in progress) in a
       single command, with an organizer of known credentials — a rich, browsable API instantly.
+- [x] Per-session demo sandbox: the shared `demo@bracket.test` login deep-clones the template
+      into a private copy scoped to that session's token (`CloneTournament` remaps every internal
+      id, incl. the `winner:` tie refs), so concurrent visitors never collide and the base template
+      stays read-only for everyone. `POST /demo/reset` re-clones it; sandboxes expire after 24h and
+      a scheduled `demo:prune-sandboxes` sweeps them hourly.
 - [x] Tournament assembly (CRUD): create a tournament, add teams, set up the group stage, and
       **generate** the single round-robin and the bracket — via new pure engines (`RoundRobinScheduler`,
       `KnockoutSeeder`, with the A1×B2 crossover and the chained `winner:` refs) + transactional Actions.
       A rich `TournamentDetailResource` (stages → groups → matches with `version`) feeds the front end.
 - [x] Tests: Domain scenarios + property test + feature tests (real database + end-to-end API,
-      incl. knockout advancement, penalties, the seeder, the full assembly, and the what-if scenario). **57 tests, ~3575 assertions.**
+      incl. knockout advancement, penalties, the seeder, the full assembly, the what-if scenario,
+      and the demo sandbox clone/isolation/prune). **88 tests, ~3900 assertions.**
 
 ## API
 
 | Method         | Route                                       | Auth  | What                                                                                                |
 | -------------- | ------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------- |
-| `POST`         | `/api/register` · `/api/login`              | —     | issues a Sanctum token                                                                              |
+| `POST`         | `/api/register` · `/api/login`              | —     | issues a Sanctum token (the demo login also provisions a per-session sandbox)                       |
 | `GET`          | `/api/groups/{group}/standings`             | —     | group standings (projection of the matches)                                                         |
 | `GET`          | `/api/stages/{stage}/bracket`               | —     | resolved bracket + champion                                                                         |
 | `POST`         | `/api/tournaments/{tournament}/scenario`    | —     | projects hypothetical results (standings + bracket) **without persisting** — the "what if?" engine  |
@@ -77,6 +83,7 @@ may import `Illuminate\*` or `App\Models\*`.
 | `POST`         | `/api/tournaments/{tournament}/teams`       | owner | adds teams in bulk                                                                                  |
 | `POST`         | `/api/tournaments/{tournament}/group-stage` | owner | sets up groups + generates the single round-robin                                                   |
 | `POST`         | `/api/tournaments/{tournament}/knockout`    | owner | generates the bracket from the groups (422 if not complete)                                         |
+| `POST`         | `/api/demo/reset`                           | demo  | drops this session's demo sandbox and clones a fresh one from the template                          |
 | `GET`          | `/api/user` · `POST /api/logout`            | token | session                                                                                             |
 
 ## Running
@@ -105,6 +112,12 @@ php artisan migrate:fresh --seed
 
 Test organizer — for the protected endpoints: **`demo@bracket.test`** / **`password`**.
 Then just browse: `GET /api/stages/{id}/bracket`, `GET /api/groups/{id}/standings`.
+
+Logging in as the demo organizer provisions a **per-session sandbox** — a token-scoped clone of
+the template — so edits never touch the shared data and concurrent visitors stay isolated.
+`POST /api/demo/reset` restores a clean copy. Sandboxes expire after 24h (`DEMO_SANDBOX_TTL_HOURS`);
+run `php artisan demo:prune-sandboxes` to sweep them, or let the scheduler do it hourly (needs
+`php artisan schedule:run` on a cron in production).
 
 ## Notes
 

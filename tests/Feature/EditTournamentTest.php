@@ -128,6 +128,17 @@ test('sending an explicit null clears a team flag without touching the name', fu
         ->and($team->code)->toBe('BRA');
 });
 
+test('can_manage resolves for the owner via a REAL bearer token on the public route', function () {
+    $owner = User::factory()->create();
+    $t = Tournament::create(['user_id' => $owner->id, 'name' => 'Cup']);
+    $token = $owner->createToken('web')->plainTextToken;
+
+    $this->withHeader('Authorization', "Bearer {$token}")
+        ->getJson("/api/tournaments/{$t->id}")
+        ->assertOk()
+        ->assertJsonPath('data.can_manage', true);
+});
+
 test('the detail resource flags can_manage for the owner only', function () {
     $owner = User::factory()->create();
     $t = Tournament::create(['user_id' => $owner->id, 'name' => 'Cup']);
