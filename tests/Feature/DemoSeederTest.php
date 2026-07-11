@@ -24,12 +24,15 @@ test('the demo seeder populates a browsable end-to-end tournament', function () 
         ->assertJsonPath('data.0.qualified', true)
         ->assertJsonPath('data.3.team.name', 'Morocco');
 
+    // 16-team bracket: 8 Round-of-16 ties, then 4 quarters, 2 semis, 1 final = 15 total.
+    // Ties come ordered by round then slot, so index 8 is the first quarterfinal, fed by the
+    // two pre-played Round-of-16 winners (Brazil and Spain) — both known, so it reads "ready".
     $knockout = Stage::where('type', 'knockout')->firstOrFail();
     $this->getJson("/api/stages/{$knockout->id}/bracket")
         ->assertOk()
-        ->assertJsonCount(7, 'data.ties')
-        ->assertJsonPath('data.ties.4.home.name', 'Brazil')
-        ->assertJsonPath('data.ties.4.away.name', 'Spain')
-        ->assertJsonPath('data.ties.4.status', 'ready')
+        ->assertJsonCount(15, 'data.ties')
+        ->assertJsonPath('data.ties.8.home.name', 'Brazil')
+        ->assertJsonPath('data.ties.8.away.name', 'Spain')
+        ->assertJsonPath('data.ties.8.status', 'ready')
         ->assertJsonPath('data.champion', null);
 });
