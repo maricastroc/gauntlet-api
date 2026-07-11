@@ -151,3 +151,12 @@ test('the detail resource flags can_manage for the owner only', function () {
     Sanctum::actingAs(User::factory()->create());
     $this->getJson("/api/tournaments/{$t->id}")->assertOk()->assertJsonPath('data.can_manage', false);
 });
+
+test('the detail resource exposes owner_id publicly (for a client-side ownership check)', function () {
+    $owner = User::factory()->create();
+    $t = Tournament::create(['user_id' => $owner->id, 'name' => 'Cup']);
+
+    $this->getJson("/api/tournaments/{$t->id}")
+        ->assertOk()
+        ->assertJsonPath('data.owner_id', $owner->id);
+});

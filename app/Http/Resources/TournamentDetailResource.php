@@ -35,6 +35,7 @@ final class TournamentDetailResource extends JsonResource
             'name' => $this->resource->name,
             'status' => $this->resource->status,
             'can_manage' => $user !== null && $user->can('manage', $this->resource),
+            'owner_id' => $this->resource->user_id,
             'teams' => $this->resource->teams->map(fn (Team $team) => self::team($team))->all(),
             'stages' => $this->resource->stages
                 ->sortBy('position')
