@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "note": "Canonical conformance vectors for the group-standings engine, shared byte-for-byte between the web app (tournament-game: src/lib/standings.ts) and the API (tournament-game-api: App\\Domain\\Tournament\\Standings\\GroupTable). Both test suites run these vectors against their own engine; the two copies MUST stay identical. Every case assumes the FIFA tiebreak chain: points, goal difference, goals for, head-to-head, wins, then entry (seed) order. 'teams' is in entry/seed order; 'expected' is the team ids in final standings order.",
+  "cases": [
+    {
+      "name": "empty group keeps entry (seed) order",
+      "teams": [{ "id": 1, "name": "A" }, { "id": 2, "name": "B" }, { "id": 3, "name": "C" }, { "id": 4, "name": "D" }],
+      "qualifyCount": 2,
+      "matches": [],
+      "expected": [1, 2, 3, 4]
+    },
+    {
+      "name": "orders by points, goal difference splits the pointless teams",
+      "teams": [{ "id": 1, "name": "A" }, { "id": 2, "name": "B" }, { "id": 3, "name": "C" }, { "id": 4, "name": "D" }],
+      "qualifyCount": 2,
+      "matches": [
+        { "homeId": 1, "awayId": 2, "homeScore": 2, "awayScore": 0 },
+        { "homeId": 1, "awayId": 3, "homeScore": 1, "awayScore": 0 },
+        { "homeId": 2, "awayId": 3, "homeScore": 1, "awayScore": 0 }
+      ],
+      "expected": [1, 2, 4, 3]
+    },
+    {
+      "name": "level on points, broken by goal difference then goals for",
+      "teams": [{ "id": 1, "name": "A" }, { "id": 2, "name": "B" }, { "id": 3, "name": "C" }, { "id": 4, "name": "D" }],
+      "qualifyCount": 2,
+      "matches": [
+        { "homeId": 1, "awayId": 3, "homeScore": 3, "awayScore": 1 },
+        { "homeId": 2, "awayId": 4, "homeScore": 2, "awayScore": 0 }
+      ],
+      "expected": [1, 2, 3, 4]
+    },
+    {
+      "name": "two teams level on every scalar are split by head-to-head (flips qualification)",
+      "teams": [{ "id": 1, "name": "A" }, { "id": 2, "name": "B" }, { "id": 3, "name": "C" }, { "id": 4, "name": "D" }],
+      "qualifyCount": 2,
+      "matches": [
+        { "homeId": 2, "awayId": 1, "homeScore": 1, "awayScore": 0 },
+        { "homeId": 1, "awayId": 3, "homeScore": 1, "awayScore": 0 },
+        { "homeId": 2, "awayId": 4, "homeScore": 0, "awayScore": 1 }
+      ],
+      "expected": [4, 2, 1, 3]
+    },
+    {
+      "name": "an irreducible head-to-head cycle falls back to entry order",
+      "teams": [{ "id": 1, "name": "A" }, { "id": 2, "name": "B" }, { "id": 3, "name": "C" }, { "id": 4, "name": "D" }],
+      "qualifyCount": 2,
+      "matches": [
+        { "homeId": 1, "awayId": 2, "homeScore": 1, "awayScore": 0 },
+        { "homeId": 2, "awayId": 3, "homeScore": 1, "awayScore": 0 },
+        { "homeId": 3, "awayId": 1, "homeScore": 1, "awayScore": 0 }
+      ],
+      "expected": [1, 2, 3, 4]
+    },
+    {
+      "name": "three-team group with a decisive winner",
+      "teams": [{ "id": 1, "name": "A" }, { "id": 2, "name": "B" }, { "id": 3, "name": "C" }],
+      "qualifyCount": 1,
+      "matches": [
+        { "homeId": 1, "awayId": 2, "homeScore": 1, "awayScore": 0 },
+        { "homeId": 2, "awayId": 3, "homeScore": 1, "awayScore": 0 },
+        { "homeId": 1, "awayId": 3, "homeScore": 1, "awayScore": 0 }
+      ],
+      "expected": [1, 2, 3]
+    }
+  ]
+}
