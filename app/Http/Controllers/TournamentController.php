@@ -16,14 +16,23 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Sanctum\PersonalAccessToken;
 
 final class TournamentController extends Controller
 {
     /** Lists the tournaments of the authenticated organizer. */
     public function index(Request $request): AnonymousResourceCollection
     {
+        $user = $request->user();
+        $token = $user->currentAccessToken();
+        $tokenId = $token instanceof PersonalAccessToken ? $token->getKey() : null;
+
         $tournaments = Tournament::query()
-            ->where('user_id', $request->user()->id)
+            ->where('user_id', $user->id)
+            ->where('is_demo_template', false)
+            ->where(function ($query) use ($tokenId) {
+                $query->whereNull('demo_token_id')->orWhere('demo_token_id', $tokenId);
+            })
             ->withCount(['teams', 'stages'])
             ->latest()
             ->get();

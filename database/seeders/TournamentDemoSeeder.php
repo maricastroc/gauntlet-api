@@ -58,6 +58,7 @@ final class TournamentDemoSeeder extends Seeder
                 'user_id' => $owner->id,
                 'name' => 'Atlas Cup 2026',
                 'status' => 'active',
+                'is_demo_template' => true,
             ]);
 
             $groupStage = Stage::create([

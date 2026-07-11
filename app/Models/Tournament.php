@@ -14,11 +14,31 @@ class Tournament extends Model
 
     protected $casts = [
         'tiebreak' => 'array',
+        'is_demo_template' => 'boolean',
+        'demo_token_id' => 'integer',
+        'demo_expires_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** The demo template this tournament was cloned from, if it is a sandbox. */
+    public function template(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'template_id');
+    }
+
+    /** A per-session demo copy is one that belongs to a Sanctum token. */
+    public function isDemoSandbox(): bool
+    {
+        return $this->demo_token_id !== null;
+    }
+
+    public function demoExpired(): bool
+    {
+        return $this->demo_expires_at !== null && $this->demo_expires_at->isPast();
     }
 
     public function teams(): HasMany

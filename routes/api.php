@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BracketController;
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\GroupStageController;
 use App\Http\Controllers\KnockoutController;
 use App\Http\Controllers\MatchResultController;
@@ -24,6 +25,7 @@ Route::post('/tournaments/{tournament}/scenario', [ScenarioController::class, 's
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/demo/reset', [DemoController::class, 'reset']);
     Route::put('/matches/{fixture}/result', [MatchResultController::class, 'update']);
 
     Route::get('/tournaments', [TournamentController::class, 'index']);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Demo\ProvisionDemoSandbox;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ final class AuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(Request $request, ProvisionDemoSandbox $demo): JsonResponse
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
@@ -44,10 +45,22 @@ final class AuthController extends Controller
             ]);
         }
 
-        return response()->json([
+        $token = $user->createToken('api');
+
+        $payload = [
             'user' => $user->only('id', 'name', 'email'),
-            'token' => $user->createToken('api')->plainTextToken,
-        ]);
+            'token' => $token->plainTextToken,
+        ];
+
+        if ($user->email === config('demo.email')) {
+            $sandbox = $demo->handle((int) $token->accessToken->getKey());
+
+            if ($sandbox !== null) {
+                $payload['sandbox_tournament_id'] = $sandbox->id;
+            }
+        }
+
+        return response()->json($payload);
     }
 
     public function logout(Request $request): Response

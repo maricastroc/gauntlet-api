@@ -84,6 +84,50 @@ test('editing a team that belongs to another tournament returns 404', function (
     $this->patchJson("/api/tournaments/{$t->id}/teams/{$team->id}", ['name' => 'X'])->assertNotFound();
 });
 
+test('editing a team requires authentication', function () {
+    $t = Tournament::create(['user_id' => User::factory()->create()->id, 'name' => 'Cup']);
+    $team = Team::create(['tournament_id' => $t->id, 'name' => 'Brazil']);
+
+    $this->patchJson("/api/tournaments/{$t->id}/teams/{$team->id}", ['name' => 'X'])->assertUnauthorized();
+
+    expect($team->fresh()->name)->toBe('Brazil');
+});
+
+test('a partial team edit only touches the fields that were sent', function () {
+    $owner = User::factory()->create();
+    $t = Tournament::create(['user_id' => $owner->id, 'name' => 'Cup']);
+    $team = Team::create(['tournament_id' => $t->id, 'name' => 'Brazil', 'code' => 'BRA', 'flag' => '🇧🇷']);
+    Sanctum::actingAs($owner);
+
+    $this->patchJson("/api/tournaments/{$t->id}/teams/{$team->id}", ['flag' => '🟢'])
+        ->assertOk()
+        ->assertJsonPath('data.name', 'Brazil')
+        ->assertJsonPath('data.code', 'BRA')
+        ->assertJsonPath('data.flag', '🟢');
+
+    $team->refresh();
+    expect($team->name)->toBe('Brazil')
+        ->and($team->code)->toBe('BRA')
+        ->and($team->flag)->toBe('🟢');
+});
+
+test('sending an explicit null clears a team flag without touching the name', function () {
+    $owner = User::factory()->create();
+    $t = Tournament::create(['user_id' => $owner->id, 'name' => 'Cup']);
+    $team = Team::create(['tournament_id' => $t->id, 'name' => 'Brazil', 'code' => 'BRA', 'flag' => '🇧🇷']);
+    Sanctum::actingAs($owner);
+
+    $this->patchJson("/api/tournaments/{$t->id}/teams/{$team->id}", ['flag' => null])
+        ->assertOk()
+        ->assertJsonPath('data.flag', null)
+        ->assertJsonPath('data.name', 'Brazil');
+
+    $team->refresh();
+    expect($team->flag)->toBeNull()
+        ->and($team->name)->toBe('Brazil')
+        ->and($team->code)->toBe('BRA');
+});
+
 test('the detail resource flags can_manage for the owner only', function () {
     $owner = User::factory()->create();
     $t = Tournament::create(['user_id' => $owner->id, 'name' => 'Cup']);
