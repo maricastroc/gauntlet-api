@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Demo\ProvisionDemoSandbox;
+use App\Actions\Tournament\CloneTournament;
+use App\Models\Tournament;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,20 +16,39 @@ use Illuminate\Validation\ValidationException;
 
 final class AuthController extends Controller
 {
-    public function register(Request $request): JsonResponse
+    public function register(Request $request, CloneTournament $clone): JsonResponse
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
+            'seed_sample' => ['sometimes', 'boolean'],
         ]);
 
-        $user = User::create($data);
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ]);
 
-        return response()->json([
+        $payload = [
             'user' => $user->only('id', 'name', 'email'),
             'token' => $user->createToken('api')->plainTextToken,
-        ], 201);
+        ];
+
+        // A permanent, fully-owned copy of the demo template — no sandbox fields, so
+        // it is never reset or pruned and the user's edits stick for good.
+        if ($request->boolean('seed_sample')) {
+            $template = Tournament::query()->where('is_demo_template', true)->first();
+
+            if ($template !== null) {
+                $payload['sample_tournament_id'] = $clone->handle($template, [
+                    'user_id' => $user->id,
+                ])->id;
+            }
+        }
+
+        return response()->json($payload, 201);
     }
 
     public function login(Request $request, ProvisionDemoSandbox $demo): JsonResponse

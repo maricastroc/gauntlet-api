@@ -41,6 +41,49 @@ function playedKnockoutFixture(int $tournamentId): Fixture
 
 beforeEach(fn () => $this->seed(TournamentDemoSeeder::class));
 
+test('registering with seed_sample gives the new user their own permanent copy', function () {
+    $body = $this->postJson('/api/register', [
+        'name' => 'Mara',
+        'email' => 'mara@example.test',
+        'password' => 'password123',
+        'seed_sample' => true,
+    ])
+        ->assertCreated()
+        ->assertJsonStructure(['user', 'token', 'sample_tournament_id'])
+        ->json();
+
+    $sample = Tournament::findOrFail($body['sample_tournament_id']);
+
+    expect($sample->user_id)->toBe($body['user']['id'])
+        ->and($sample->is_demo_template)->toBeFalse()
+        ->and($sample->demo_token_id)->toBeNull()
+        ->and($sample->demo_expires_at)->toBeNull();
+
+    // The owner can save a knockout result: it persists, with no sandbox reset/prune attached.
+    $fixture = playedKnockoutFixture($sample->id);
+
+    $this->withToken($body['token'])
+        ->putJson("/api/matches/{$fixture->id}/result", [
+            'home_score' => 2,
+            'away_score' => 1,
+            'expected_version' => $fixture->version,
+        ])
+        ->assertOk();
+});
+
+test('registering without seed_sample creates no tournament', function () {
+    $body = $this->postJson('/api/register', [
+        'name' => 'Solo',
+        'email' => 'solo@example.test',
+        'password' => 'password123',
+    ])
+        ->assertCreated()
+        ->json();
+
+    expect($body)->not->toHaveKey('sample_tournament_id')
+        ->and(Tournament::where('user_id', $body['user']['id'])->exists())->toBeFalse();
+});
+
 test('demo login provisions an isolated sandbox scoped to the session token', function () {
     $body = $this->postJson('/api/login', ['email' => 'demo@bracket.test', 'password' => 'password'])
         ->assertOk()
