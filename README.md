@@ -28,7 +28,7 @@
 </p>
 
 <p align="center">
-  🔗 <strong>Live demo:</strong> <a href="https://gauntlet-api.marianacastro.dev/docs/api">urban-system.marianacastro.dev</a>
+  🔗 <strong>Live demo:</strong> <a href="https://gauntlet-api.marianacastro.dev/docs/api">gauntlet-api.marianacastro.dev/docs/api</a>
 </p>
 
 <br/>
