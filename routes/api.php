@@ -15,8 +15,8 @@ use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\TournamentStreamController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth');
 
 Route::get('/demo/template', [DemoController::class, 'template']);
 

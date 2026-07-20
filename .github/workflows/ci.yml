@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Domain engine — Pest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, sqlite3, pdo_sqlite, bcmath, intl
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      # Pest runs against in-memory sqlite (see phpunit.xml). PAO_DISABLE=1 bypasses the
+      # laravel/pao TUI wrapper so CI gets plain, honest pass/fail output. The suite
+      # includes StandingsVectorsTest — the PHP engine ranking the shared vectors.
+      - name: Pest
+        env:
+          PAO_DISABLE: '1'
+        run: php artisan test
+
+  conformance:
+    name: Dual-engine vector parity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout api (this repo)
+        uses: actions/checkout@v4
+        with:
+          path: api
+
+      # The sibling engine, whose test-vectors/ must stay byte-identical to ours.
+      # A default GITHUB_TOKEN can read a public sibling; set CONFORMANCE_REPO_TOKEN
+      # (a read-only PAT) if that repo is private.
+      - name: Checkout web (sibling engine)
+        uses: actions/checkout@v4
+        with:
+          repository: maricastroc/gauntlet
+          path: web
+          token: ${{ secrets.CONFORMANCE_REPO_TOKEN || github.token }}
+
+      - name: Assert both engines share identical conformance vectors
+        run: api/scripts/check-vectors-parity.sh api/tests/Vectors web/test-vectors
