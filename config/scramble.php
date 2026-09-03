@@ -57,7 +57,7 @@ return [
     ],
 
     'ui' => [
-        'title' => 'Tournament Game API',
+        'title' => 'Gauntlet',
     ],
 
     'renderer' => 'scalar',
