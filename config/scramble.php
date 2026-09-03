@@ -57,7 +57,7 @@ return [
     ],
 
     'ui' => [
-        'title' => 'Gauntlet',
+        'title' => 'Gauntlet API',
     ],
 
     'renderer' => 'scalar',
