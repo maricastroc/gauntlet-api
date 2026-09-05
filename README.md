@@ -209,3 +209,15 @@ proxy/CDN, make sure it doesn't buffer the response (the endpoint sends `X-Accel
 - Simplifications documented in the engine: the exact order of the FIFA rulebook is tunable by
   just reordering `TiebreakRules::fifa()`; the drawing-of-lots criterion (random) is replaced by a
   deterministic input order, better for reproducibility and testing.
+
+---
+
+<br/>
+
+<div align="center">
+
+© 2025–2026 [**Mariana Castro**](https://marianacastro.dev) · [Live demo](https://gauntlet-api.marianacastro.dev/docs/api)
+
+⭐ If you like this project, give it a star on GitHub!
+
+</div>
