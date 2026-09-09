@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   test:
-    name: Domain engine — Pest
+    name: Domain engine — Pint · Pest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +38,9 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+
+      - name: Pint
+        run: ./vendor/bin/pint --test
 
       # Pest runs against in-memory sqlite (see phpunit.xml). PAO_DISABLE=1 bypasses the
       # laravel/pao TUI wrapper so CI gets plain, honest pass/fail output. The suite

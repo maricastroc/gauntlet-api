@@ -18,9 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-        //
-    })
+    ->withMiddleware(function (Middleware $middleware): void {})
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
@@ -29,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(fn (AuthenticationException $e, Request $request) => $request->is('api/*')
             ? new JsonResponse(['message' => $e->getMessage()], 401)
             : null);
-            
+
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
             if (! $request->is('api/*')) {
                 return null;

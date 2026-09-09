@@ -20,7 +20,6 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 final class TournamentController extends Controller
 {
-    /** Lists the tournaments of the authenticated organizer. */
     public function index(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
@@ -40,7 +39,6 @@ final class TournamentController extends Controller
         return TournamentResource::collection($tournaments);
     }
 
-    /** Creates a tournament (draft). */
     public function store(CreateTournamentRequest $request, CreateTournament $action): JsonResponse
     {
         $tournament = $action->handle($request->user(), $request->tournamentName());
@@ -50,7 +48,6 @@ final class TournamentController extends Controller
             ->setStatusCode(201);
     }
 
-    /** Renames the tournament. Owner only. */
     public function update(
         UpdateTournamentRequest $request,
         Tournament $tournament,
@@ -63,13 +60,11 @@ final class TournamentController extends Controller
         return new TournamentResource($tournament->loadCount(['teams', 'stages']));
     }
 
-    /** The full view of the tournament — structure + matches (with version). Public (fan view). */
     public function show(Tournament $tournament): TournamentDetailResource
     {
         return new TournamentDetailResource($tournament->loadFullDetail());
     }
 
-    /** Removes the tournament (cascade handles teams/stages/matches). Owner only. */
     public function destroy(Tournament $tournament): Response
     {
         Gate::authorize('manage', $tournament);

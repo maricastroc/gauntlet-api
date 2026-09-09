@@ -6,6 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-final class InvalidTournamentStructure extends RuntimeException
-{
-}
+final class InvalidTournamentStructure extends RuntimeException {}

@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Gate;
 
 final class TeamController extends Controller
 {
-    /** Adds teams to the tournament, in batch. Owner only. */
     public function store(AddTeamsRequest $request, Tournament $tournament, AddTeams $action): JsonResponse
     {
         Gate::authorize('manage', $tournament);
@@ -26,7 +25,6 @@ final class TeamController extends Controller
         return TeamResource::collection($teams)->response()->setStatusCode(201);
     }
 
-    /** Renames a team / updates its flag. Owner only. */
     public function update(
         UpdateTeamRequest $request,
         Tournament $tournament,

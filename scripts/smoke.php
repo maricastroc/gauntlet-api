@@ -7,13 +7,13 @@ use App\Domain\Tournament\Input\TeamRef;
 use App\Domain\Tournament\Standings\GroupTable;
 use App\Domain\Tournament\Standings\TiebreakRules;
 
-$base = dirname(__DIR__) . '/app/Domain/Tournament';
-require $base . '/Input/MatchResult.php';
-require $base . '/Input/TeamRef.php';
-require $base . '/Standings/Criterion.php';
-require $base . '/Standings/TiebreakRules.php';
-require $base . '/Standings/Standing.php';
-require $base . '/Standings/GroupTable.php';
+$base = dirname(__DIR__).'/app/Domain/Tournament';
+require $base.'/Input/MatchResult.php';
+require $base.'/Input/TeamRef.php';
+require $base.'/Standings/Criterion.php';
+require $base.'/Standings/TiebreakRules.php';
+require $base.'/Standings/Standing.php';
+require $base.'/Standings/GroupTable.php';
 
 $pass = 0;
 $fail = 0;
@@ -21,7 +21,7 @@ function check(string $label, bool $ok): void
 {
     global $pass, $fail;
     $ok ? $pass++ : $fail++;
-    echo ($ok ? "  \033[32m✓\033[0m " : "  \033[31m✗ FALHOU\033[0m ") . $label . PHP_EOL;
+    echo ($ok ? "  \033[32m✓\033[0m " : "  \033[31m✗ FALHOU\033[0m ").$label.PHP_EOL;
 }
 
 /** @param array $table @return array<int,int> id do time => posição */
@@ -31,6 +31,7 @@ function positions(array $table): array
     foreach ($table as $s) {
         $out[$s->team->id] = $s->position;
     }
+
     return $out;
 }
 
@@ -51,7 +52,7 @@ check('Brasil em 1º (4 pts, saldo +2)', $pos[1] === 1);
 check('Japão em 2º (4 pts, saldo +1)', $pos[4] === 2);
 check('Croácia em 3º (2 pts)', $pos[2] === 3);
 check('Marrocos em 4º (0 pts)', $pos[3] === 4);
-check('Top 2 classificados', $table[0]->qualified && $table[1]->qualified && !$table[2]->qualified && !$table[3]->qualified);
+check('Top 2 classificados', $table[0]->qualified && $table[1]->qualified && ! $table[2]->qualified && ! $table[3]->qualified);
 
 $sumPts = array_sum(array_map(fn ($s) => $s->points, $table));
 $expectedPts = array_sum(array_map(fn ($m) => $m->homeScore === $m->awayScore ? 2 : 3, $matches));
@@ -120,8 +121,8 @@ $aAfterPts = array_values(array_filter($after, fn ($s) => $s->team->id === 1))[0
 check('Pontos de A subiram (1 -> 3)', $aBeforePts === 1 && $aAfterPts === 3);
 check('Posição de A não piorou', $aAfterPos <= $aBeforePos);
 
-echo "\n" . str_repeat('─', 52) . "\n";
+echo "\n".str_repeat('─', 52)."\n";
 echo $fail === 0
     ? "\033[32mTODOS OS {$pass} CHECKS PASSARAM\033[0m\n"
-    : "\033[31m{$fail} FALHA(S)\033[0m de " . ($pass + $fail) . " checks\n";
+    : "\033[31m{$fail} FALHA(S)\033[0m de ".($pass + $fail)." checks\n";
 exit($fail === 0 ? 0 : 1);

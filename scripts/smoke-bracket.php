@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-use App\Domain\Tournament\Input\TeamRef;
 use App\Domain\Tournament\Bracket\BracketResolver;
+use App\Domain\Tournament\Bracket\ResolvedTie;
 use App\Domain\Tournament\Bracket\SlotSource;
 use App\Domain\Tournament\Bracket\Tie;
 use App\Domain\Tournament\Bracket\TieResult;
+use App\Domain\Tournament\Input\TeamRef;
 
-$base = dirname(__DIR__) . '/app/Domain/Tournament';
-require $base . '/Input/TeamRef.php';
-require $base . '/Bracket/SlotSource.php';
-require $base . '/Bracket/Tie.php';
-require $base . '/Bracket/TieResult.php';
-require $base . '/Bracket/ResolvedTie.php';
-require $base . '/Bracket/MatchOutcome.php';
-require $base . '/Bracket/BracketResolver.php';
+$base = dirname(__DIR__).'/app/Domain/Tournament';
+require $base.'/Input/TeamRef.php';
+require $base.'/Bracket/SlotSource.php';
+require $base.'/Bracket/Tie.php';
+require $base.'/Bracket/TieResult.php';
+require $base.'/Bracket/ResolvedTie.php';
+require $base.'/Bracket/MatchOutcome.php';
+require $base.'/Bracket/BracketResolver.php';
 
 $pass = 0;
 $fail = 0;
@@ -23,16 +24,17 @@ function check(string $label, bool $ok): void
 {
     global $pass, $fail;
     $ok ? $pass++ : $fail++;
-    echo ($ok ? "  \033[32m✓\033[0m " : "  \033[31m✗ FALHOU\033[0m ") . $label . PHP_EOL;
+    echo ($ok ? "  \033[32m✓\033[0m " : "  \033[31m✗ FALHOU\033[0m ").$label.PHP_EOL;
 }
 
-/** @return array<int,\App\Domain\Tournament\Bracket\ResolvedTie> id => confronto resolvido */
+/** @return array<int,ResolvedTie> id => confronto resolvido */
 function byId(array $resolved): array
 {
     $out = [];
     foreach ($resolved['ties'] as $t) {
         $out[$t->id] = $t;
     }
+
     return $out;
 }
 
@@ -61,7 +63,7 @@ $full = [
     new TieResult(1, 3, 1),
     new TieResult(2, 2, 2, 4, 3),
     new TieResult(3, 1, 0),
-    new TieResult(4, 0, 2), 
+    new TieResult(4, 0, 2),
     new TieResult(5, 2, 1),
     new TieResult(6, 1, 1, 5, 4),
     new TieResult(7, 1, 0),
@@ -120,13 +122,13 @@ $cyclic = [
 $threw = false;
 try {
     BracketResolver::resolve($cyclic, [], $seeds);
-} catch (\RuntimeException $e) {
+} catch (RuntimeException $e) {
     $threw = true;
 }
 check('Ciclo lança RuntimeException em vez de loop infinito', $threw);
 
-echo "\n" . str_repeat('─', 52) . "\n";
+echo "\n".str_repeat('─', 52)."\n";
 echo $fail === 0
     ? "\033[32mTODOS OS {$pass} CHECKS PASSARAM\033[0m\n"
-    : "\033[31m{$fail} FALHA(S)\033[0m de " . ($pass + $fail) . " checks\n";
+    : "\033[31m{$fail} FALHA(S)\033[0m de ".($pass + $fail)." checks\n";
 exit($fail === 0 ? 0 : 1);

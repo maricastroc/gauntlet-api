@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Actions\Tournament\BuildGroupStage;
 use App\Models\Fixture;
 use App\Models\Stage;
 use App\Models\Team;
@@ -9,6 +10,7 @@ use App\Models\Tie;
 use App\Models\Tournament;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
@@ -22,7 +24,7 @@ function ownedTournamentWithTeams(User $owner): array
     return [$tournament, $teams];
 }
 
-/** @param  \Illuminate\Support\Collection<int, Team>  $teams */
+/** @param  Collection<int, Team>  $teams */
 function fourGroupsPayload($teams): array
 {
     return [
@@ -132,7 +134,7 @@ test('generates the knockout from the groups, with winner: resolved to real ids'
     $this->postJson("/api/tournaments/{$tournament->id}/knockout")
         ->assertOk()
         ->assertJsonPath('data.stages.1.type', 'knockout')
-        ->assertJsonCount(7, 'data.stages.1.ties'); 
+        ->assertJsonCount(7, 'data.stages.1.ties');
 
     $knockout = Stage::where('tournament_id', $tournament->id)->where('type', 'knockout')->firstOrFail();
     $ties = Tie::where('stage_id', $knockout->id)->get();
@@ -158,7 +160,7 @@ test('does not generate the knockout without a group stage (422)', function () {
 test('the full tournament view is public (fan view)', function () {
     $owner = User::factory()->create();
     [$tournament, $teams] = ownedTournamentWithTeams($owner);
-    app(\App\Actions\Tournament\BuildGroupStage::class)->handle($tournament, 2, [
+    app(BuildGroupStage::class)->handle($tournament, 2, [
         ['name' => 'A', 'team_ids' => [$teams[0]->id, $teams[1]->id]],
         ['name' => 'B', 'team_ids' => [$teams[2]->id, $teams[3]->id]],
         ['name' => 'C', 'team_ids' => [$teams[4]->id, $teams[5]->id]],

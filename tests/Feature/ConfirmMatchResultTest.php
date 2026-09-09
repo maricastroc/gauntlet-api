@@ -84,6 +84,6 @@ test('rejects a concurrent edit with a stale version', function () {
 
     expect(fn () => $action->handle($f[1], 3, 0, 0))
         ->toThrow(StaleResultException::class);
-        
+
     expect(Fixture::find($f[1]->id)->home_score)->toBe(2);
 });

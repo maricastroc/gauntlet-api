@@ -161,12 +161,17 @@ php scripts/smoke.php          # group standings
 php scripts/smoke-bracket.php  # knockout
 ```
 
-After installing dependencies, the Pest suite:
+After installing dependencies, the Pest suite and the style gate:
 
 ```bash
 composer install
 ./vendor/bin/pest
+./vendor/bin/pint --test   # verify, no writes; drop --test to fix
 ```
+
+Both run in CI. Pest is wrapped by `laravel/pao`, whose TUI can swallow failure
+detail — `PAO_DISABLE=1 ./vendor/bin/pest` gives plain pass/fail output, and CI
+sets it for exactly that reason.
 
 ### Demo
 

@@ -9,9 +9,6 @@ use App\Models\Tournament;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Adds teams to a tournament, in bulk. Each team is just a name + (optional) code and flag.
- */
 final class AddTeams
 {
     /**

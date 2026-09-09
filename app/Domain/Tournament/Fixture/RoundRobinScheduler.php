@@ -17,7 +17,7 @@ final class RoundRobinScheduler
 
     /**
      * @param  int[]  $teamIds  ids of the group's teams, in entry order
-     * @return list<array{home: int, away: int}>  the ties, each pair once
+     * @return list<array{home: int, away: int}> the ties, each pair once
      */
     public static function schedule(array $teamIds): array
     {
